@@ -33,10 +33,10 @@ class BreedRepositoryMock @Inject constructor(
             ),
             Breed(
                 id = 2,
-                nameOfBreed = "sivaMacka",
+                nameOfBreed = "sibirska macka",
                 alternativeNamesOfBreed = listOf("posivela", "basSiva"),
-                describeBreed = "lepa i umiljata",
-                breedTraits = listOf("brza", "ruzna"),
+                describeBreed = "Sibirska mačka je srednje do velike rase, poznata po svojoj gustoj, vodootpornoj dlaci i prijateljskoj, razigranoj prirodi. Inteligentna i privržena, često se vezuje za jednog člana porodice. Dobro se slaže sa decom i drugim ljubimcima, ali zahteva redovno četkanje.",
+                breedTraits = listOf("brza", "ruzna", "prgava", "dosadna", "debela", "dugodlaka", "ogromna"),
                 urlForImage = "primerUrl",
                 originCountries = listOf("spanija", "rusija"),
                 expectedLifeDuration = 12,
@@ -49,7 +49,7 @@ class BreedRepositoryMock @Inject constructor(
                 vocalisation = 4,
                 isRareType = true,
                 urlForWikipediaPage = "primerUrl",
-            )
+            ),
 
         )
     }
