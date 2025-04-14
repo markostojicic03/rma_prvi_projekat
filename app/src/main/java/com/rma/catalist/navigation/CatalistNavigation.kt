@@ -16,10 +16,6 @@ import com.rma.catalist.breeds.list.BreedListViewModel
 import com.rma.catalist.breeds.list.BreedListScreen
 
 
-const val BREED_ID_ARG = "breedId"
-val NavBackStackEntry.breedIdOrThrow: Int
-    get() = this.arguments?.getInt(BREED_ID_ARG) ?: error("$BREED_ID_ARG not found.")
-
 private fun NavController.navigateToDetails(breedId: Int) {
     this.navigate(route = "details/$breedId")
 }
