@@ -20,58 +20,40 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.material3.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.*
+import androidx.compose.material.icons.filled.Search
 
-    @ExperimentalMaterial3Api
+
+@ExperimentalMaterial3Api
     @Composable
-    fun CenterAlignedTopAppBar(
-        title: @Composable () -> Unit,
-        modifier: Modifier = Modifier,
-        navigationIcon: @Composable () -> Unit = {},
-        actions: @Composable RowScope.() -> Unit = {},
-        expandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
-        windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
-        colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
-        scrollBehavior: TopAppBarScrollBehavior? = null
+    fun CatalistAppTopBar(
+        titleText : String,
+        onMenuClick: () -> Unit,
+        onSearchClick: () -> Unit,
     ): Unit{
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = {
-                        Text("Centered TopAppBar", maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = { /* doSomething() */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /* doSomething() */ }) {
-                            Icon(
-                                imageVector = Icons.Filled.Favorite,
-                                contentDescription = "Localized description"
-                            )
-                        }
-                    }
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = titleText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onMenuClick) {
+                Icon(
+                    imageVector = Icons.Filled.Menu,
+                    contentDescription = "Menu"
                 )
-            },
-            content = { innerPadding ->
-                LazyColumn(
-                    contentPadding = innerPadding,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val list = (0..75).map { it.toString() }
-                    items(count = list.size) {
-                        Text(
-                            text = list[it],
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                        )
-                    }
-                }
             }
-        )
+        },
+        actions = {
+            IconButton(onClick = onSearchClick) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search"
+                )
+            }
+        }
+    )
     }
 

@@ -18,7 +18,7 @@ class BreedRepositoryMock @Inject constructor(
                 alternativeNamesOfBreed = listOf("pozutela", "basPozutela"),
                 describeBreed = "lepa i umiljata",
                 breedTraits = listOf("nervozna", "luda"),
-                urlForImage = TODO(),
+                urlForImage = "primerUrl",
                 originCountries = listOf("srbija", "republika srpska"),
                 expectedLifeDuration = 10,
                 breedAvgWeight = 7.5,
@@ -29,7 +29,7 @@ class BreedRepositoryMock @Inject constructor(
                 healthIssues = 5,
                 vocalisation = 5,
                 isRareType = true,
-                urlForWikipediaPage = TODO(),
+                urlForWikipediaPage = "primerUrl"
             ),
             Breed(
                 id = 2,
@@ -37,7 +37,7 @@ class BreedRepositoryMock @Inject constructor(
                 alternativeNamesOfBreed = listOf("posivela", "basSiva"),
                 describeBreed = "lepa i umiljata",
                 breedTraits = listOf("brza", "ruzna"),
-                urlForImage = TODO(),
+                urlForImage = "primerUrl",
                 originCountries = listOf("spanija", "rusija"),
                 expectedLifeDuration = 12,
                 breedAvgWeight = 17.5,
@@ -48,7 +48,7 @@ class BreedRepositoryMock @Inject constructor(
                 healthIssues = 4,
                 vocalisation = 4,
                 isRareType = true,
-                urlForWikipediaPage = TODO(),
+                urlForWikipediaPage = "primerUrl",
             )
 
         )
