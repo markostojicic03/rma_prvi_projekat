@@ -3,6 +3,7 @@ package com.rma.catalist.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -12,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.rma.catalist.breeds.details.BreedDetailsScreen
+import com.rma.catalist.breeds.details.BreedDetailsViewModel
 import com.rma.catalist.breeds.list.BreedListViewModel
 import com.rma.catalist.breeds.list.BreedListScreen
 
@@ -30,27 +32,17 @@ fun CatalistNavigation(){
     ){
         breedList(route = "start", navController = navController)
 
-
-
-
-        composable(
+        breedDetails(
             route = "details/{$BREED_ID_ARG}",
             arguments = listOf(
-                navArgument(name = BREED_ID_ARG) {
+                navArgument(name = BREED_ID_ARG){
                     type = NavType.IntType
                     nullable = false
                 }
             ),
-        ) { navBackStackEntry ->
-            val breedId = navBackStackEntry.breedIdOrThrow
+            navController = navController
+        )
 
-            BreedDetailsScreen(
-                breedId = breedId,
-                onClose = {
-                    navController.navigateUp()
-                }
-            )
-        }
     }
 }
 
@@ -67,6 +59,24 @@ private fun NavGraphBuilder.breedList(
         }
 
     )
-
-
 }
+
+private fun NavGraphBuilder.breedDetails(
+    route: String,
+    arguments: List<NamedNavArgument>,
+    navController: NavController,
+) = composable(route = route, arguments = arguments){
+    navBackStackEntry : NavBackStackEntry->
+    val viewModel = hiltViewModel<BreedDetailsViewModel>()
+    val breedId = navBackStackEntry.arguments?.getInt(BREED_ID_ARG)
+        ?: error("Breed ID is missing!")
+    BreedDetailsScreen(
+        viewModel = viewModel,
+        breedId = breedId,
+        onClose =  {
+            navController.navigateUp()
+        },
+    )
+}
+
+
