@@ -21,39 +21,42 @@ import androidx.compose.material3.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.graphics.vector.ImageVector
 
 
 @ExperimentalMaterial3Api
     @Composable
     fun CatalistAppTopBar(
-        titleText : String,
-        onMenuClick: () -> Unit,
-        onSearchClick: () -> Unit,
+        modifier: Modifier = Modifier,
+        text: String,
+        navigationIcon: ImageVector? = null,
+        navigationOnClick: (() -> Unit)? = null,
+        actionIcon: ImageVector? = null,
+        actionOnClick: (() -> Unit)? = null,
     ): Unit{
     CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = titleText,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
+        modifier = modifier,
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
         navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(
-                    imageVector = Icons.Filled.Menu,
-                    contentDescription = "Menu"
+            if (navigationIcon != null) {
+                AppTopBarIcon(
+                    icon = navigationIcon,
+                    onClick = { navigationOnClick?.invoke() },
                 )
             }
+        },
+        title = {
+            Text(text = text)
         },
         actions = {
-            IconButton(onClick = onSearchClick) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search"
+            if (actionIcon != null) {
+                AppTopBarIcon(
+                    icon = actionIcon,
+                    onClick = { actionOnClick?.invoke() }
                 )
             }
-        }
+        },
+
     )
-    }
+}
 
