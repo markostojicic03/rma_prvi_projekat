@@ -1,4 +1,4 @@
-package com.rma.catalist.di
+package com.rma.catalist.breeds.di
 
 import com.rma.catalist.breeds.domain.BreedRepository
 import com.rma.catalist.breeds.repository.BreedRepositoryMock
