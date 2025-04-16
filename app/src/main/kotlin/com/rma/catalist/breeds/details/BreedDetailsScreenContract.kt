@@ -5,7 +5,7 @@ import com.rma.catalist.breeds.domain.Breed
 interface BreedDetailsScreenContract {
 
     data class UiState(
-        val breedId: Int,
+        val breedId: String,
         val loading: Boolean = true,
         val data: Breed? = null,
     )

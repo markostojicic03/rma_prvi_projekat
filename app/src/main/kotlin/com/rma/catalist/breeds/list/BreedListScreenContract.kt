@@ -14,8 +14,6 @@ interface BreedListScreenContract {
     )
 
     sealed class BreedListUiEvent {
-        data object RefreshData : BreedListUiEvent()
-        data class BreedClicked(val breedId: Int) : BreedListUiEvent()
         data class SearchFilter(val query: String) : BreedListUiEvent()// kada korisnik kuca u pretrazi ime rase macke
         object LoadBreeds : BreedListUiEvent() // ucitavamo rase macaka
     }

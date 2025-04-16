@@ -21,7 +21,7 @@ import com.rma.catalist.core.compose.CatalistAppTopBar
 @Composable
 fun BreedDetailsScreen(
     viewModel: BreedDetailsViewModel,
-    breedId :Int,
+    breedId : String,
     onClose: ()-> Unit
 ){
     val uiState = viewModel.state.collectAsState()
@@ -38,7 +38,7 @@ fun BreedDetailsScreen(
 @Composable
 fun BreedDetailsScreen(
     state : BreedDetailsScreenContract.UiState,
-    breedId :Int,
+    breedId : String,
     onClose: ()-> Unit
 ){
     Scaffold(
@@ -59,8 +59,9 @@ fun BreedDetailsScreen(
 
 
             Text(
-                text = "Title: Naslov za $breedId"
+                text = "Stranica BreedDetails za id: $breedId"
             )
+
 
         }
     }

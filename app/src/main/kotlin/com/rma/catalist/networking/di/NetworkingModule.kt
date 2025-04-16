@@ -26,8 +26,7 @@ object NetworkingModule {
          */
         .addInterceptor {
             val updatedRequest = it.request().newBuilder()
-//                .url("https://servis.raf.edu.rs/users")
-                .addHeader("CustomHeader", "CustomValue")
+                .addHeader("x-api-key", "live_p3R34PXrOOcunXlvMUa1nAHwC9tEUS5t15kbzlqZ2kVRSKVbIG0i4mQ0vSoWcpHu")
                 .build()
 
             it.proceed(updatedRequest)
@@ -45,7 +44,7 @@ object NetworkingModule {
         okHttpClient: OkHttpClient,
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://jsonplaceholder.typicode.com/")
+            .baseUrl("https://api.thecatapi.com/v1/")
             .client(okHttpClient)
             .addConverterFactory(NetworkingJson.asConverterFactory("application/json".toMediaType()))
             .build()

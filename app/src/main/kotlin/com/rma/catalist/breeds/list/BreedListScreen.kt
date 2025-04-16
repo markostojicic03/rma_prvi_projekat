@@ -4,24 +4,41 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import coil3.compose.SubcomposeAsyncImage
 import com.rma.catalist.breeds.domain.Breed
 import com.rma.catalist.core.compose.CatalistAppTopBar
 import com.rma.catalist.core.compose.LoadingIndicator
@@ -31,7 +48,7 @@ import com.rma.catalist.theme.PurpleGrey80
 @Composable
 fun BreedListScreen(
     viewModel: BreedListViewModel,
-    clickOnBreed: ((Int) -> Unit)?
+    clickOnBreed: ((String) -> Unit)?
 ){
 
     val uiState = viewModel.state.collectAsState()
@@ -50,7 +67,7 @@ fun BreedListScreen(
 private fun BreedListScreen(
     state: BreedListScreenContract.BreedListUiState,
     eventPublisher: (BreedListScreenContract.BreedListUiEvent) -> Unit,
-    onBreedClick: ((Int) -> Unit)?
+    onBreedClick: ((String) -> Unit)?
 ) {
     Scaffold(
         topBar = {
@@ -95,77 +112,174 @@ private fun BreedListScreen(
 }
 
 
+
 @Composable
 fun BreedListItem(
     data: Breed,
-    onClick: () -> Unit,
+    onClick: (String) -> Unit,
 ) {
-    Column(
+    Card(
         modifier = Modifier
+            //.height(500.dp)
             .fillMaxWidth()
-            .padding(16.dp)
-            .border(width = 2.dp, color = PurpleGrey80, shape = RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick)
-            .padding(16.dp) // unutrašnji padding unutar bordera
-    ){Text(
-        modifier = Modifier.padding(bottom = 8.dp),
-        text = ItemContent(data),
-    )
-        if(!data.breedTraits.isEmpty()){
-            var i = 0;
-            for(trait in data.breedTraits){
-                if(i > 4) break;
-                SuggestionChipForTraits(trait)
-                i++
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .clip(CardDefaults.shape)
+            .clickable { onClick(data.id) },
+    ){
+        Row {
+            SubcomposeAsyncImage(
+                modifier = Modifier
+                    .size(170.dp)
+                    .padding(start = 5.dp, top = 55.dp),
+                model = "https://cdn2.thecatapi.com/images/" + data.reference_image_id+".jpg",
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+//                                contentScale = ContentScale.Fit,
+//                                contentScale = ContentScale.FillWidth,
+//                                contentScale = ContentScale.Crop,
+                loading = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(36.dp),
+                        )
+                    }
+                },
+                error = {
+                    Log.d("BreedListInfo", "Image didnt load for id: "+ data.id)
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Image(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+            Column(
+                modifier = Modifier.padding(bottom = 8.dp, start = 15.dp ),
+            ){
+                ItemContent(data)
+            }
+
+
+        }
+        Row {
+            if(!data.temperament.isEmpty()){
+                var i = 0;
+                for(trait in data.temperament){
+                    if(i > 2) break;
+                    SuggestionChipForTraits(trait)
+                    i++
+                }
+            }
+            else{
+                Text(text = "PRAZNA TEMPERAMENT LISTA!!!")
             }
         }
-
     }
 
 }
+
+
+
+//
+//  @Composable
+//  fun BreedListItem(
+//      data: Breed,
+//      onClick: (String) -> Unit,
+//  ) {
+//      Card(
+//          modifier = Modifier
+//              .height(100.dp)
+//              .fillMaxWidth()
+//              .padding(horizontal = 8.dp)
+//              .clip(CardDefaults.shape)
+//              .clickable { onClick(data.id) },
+//      ){Text(
+//          modifier = Modifier.padding(bottom = 8.dp),
+//          text = ItemContent(data),
+//      )
+//         if(!data.temperament.isEmpty()){
+//              var i = 0;
+//              for(trait in data.temperament){
+//                  if(i > 4) break;
+//                  SuggestionChipForTraits(trait)
+//                  i++
+//              }
+//          }
+//
+//      }
+//  }
+//
+//
+
+
+
+
+
+
+
 @Composable
 fun SuggestionChipForTraits(
     textForChip : String
 ) {
     SuggestionChip(
+        modifier = Modifier.padding(5.dp),
         onClick = { Log.d("Suggestion chip", textForChip) },
         label = { Text(textForChip) }
     )
 }
 
+@Composable
 fun ItemContent(
     data:Breed,
 
-):String{
-    val contentText = StringBuilder()
-    contentText.append("Breed Name: "+ data.nameOfBreed + "\n")
-    if(!data.alternativeNamesOfBreed.isEmpty()){
-        contentText.append("Alternative Breed Names: ")
-        data.alternativeNamesOfBreed.forEach {
-            contentText.append(it)
-            contentText.append(", ")
-        }
-        if (contentText.endsWith(", ")) {
-            contentText.setLength(contentText.length - 2)
-        }
-        contentText.append("\n")
-    }
+){
 
-    contentText.append("Breed Describe: "+"\n")
-    var i = 1
-
-    for(chr in data.describeBreed.toCharArray()){
-        if(i > 250){
-            contentText.append("...")
-            break
+    Text(
+        text = buildAnnotatedString{
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Breed Name: "+ data.name + "\n") }
         }
-        contentText.append(chr)
-        i++
+    )
+
+    if(data.alt_names != null && data.alt_names.isNotEmpty()){
+        Text(
+            text = buildAnnotatedString{
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
+                    append("Alternative Breed Names: ")
+                    append(data.alt_names)
+                    append("\n")
+
+                }
+            }
+        )
+
     }
 
 
+    Text(
+        text = buildAnnotatedString{
+            var i = 1
 
-    return contentText.toString()
+            for(chr in data.description.toCharArray()){
+                if(i > 250){
+                    append("...")
+                    break
+                }
+                append(chr)
+                i++
+            }
+        }
+    )
+
+
+
+
 }
 
 

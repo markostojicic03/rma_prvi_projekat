@@ -1,32 +1,28 @@
 package com.rma.catalist.breeds.domain
 
+import com.rma.catalist.breeds.api.model.Weight
+
 data class Breed(
     // ovde pisem osnovne informacije
+        val weight: Weight? = null,
+        val id: String,
+        val name : String,
+        val temperament: List<String>,
+        val origin: String = "",
+        val description: String = "",
+        val life_span : String = "",
+        val alt_names : String? = null,
 
-        val id: Int,
-        val nameOfBreed: String,
-        val alternativeNamesOfBreed: List<String>,
-        val describeBreed: String, // max 250 karaktera, skratiti ako ima vise od toga
-        val breedTraits: List<String>, // max 5 osobina
-
-    // ovde su informacije koje se prikazuju na Breed Details Screen-u
-
-        val urlForImage: String,
-    // prikazati ceo describeBreed na Breed Details ekranu
-        val originCountries: List<String>,
-        // sve osobine temperamenta prikazati na ovom ekranu
-        val expectedLifeDuration: Int,
-        val breedAvgWeight: Double,
-        val breedAvgHeight: Double,
         // za UI widgete
-        val affectionLevel: Int,
-        val childFriendly: Int,
-        val energyLevel: Int,
-        val healthIssues: Int,
+        val affection_level: Int,
+        val child_friendly: Int,
+        val energy_level: Int,
+        val health_issues: Int,
         val vocalisation: Int,
 
-        val isRareType: Boolean,
-        val urlForWikipediaPage: String
+        val rare: Int,
+        val wikipedia_url: String? = null,
+        val reference_image_id: String? = null,
 
 ) {
     companion object {

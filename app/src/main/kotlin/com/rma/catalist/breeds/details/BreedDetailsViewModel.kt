@@ -34,34 +34,34 @@ class BreedDetailsViewModel @Inject constructor(
 
 
     init {
-        observeEvents()
-        loadBreeds(breedId)
+      //  observeEvents()
+      //  loadBreeds(breedId)
     }
 
 
-    private fun observeEvents() {
-        viewModelScope.launch {
-            events.collect { event ->
-                //
-
-            }
-        }
-    }
-
-    private fun loadBreeds(breedId: Int) = viewModelScope.launch {
-        try {
-            setState { copy(loading = true) }
-            val breedData = breedRepository.getBreedById(breedId = breedId)
-            setState {
-                copy(
-                    data = breedData,
-                    loading = false
-                )
-            }
-        } catch (error: Exception) {
-            //
-        }
-    }
+//    private fun observeEvents() {
+//        viewModelScope.launch {
+//            events.collect { event ->
+//                //
+//
+//            }
+//        }
+//    }
+//
+//    private fun loadBreeds(breedId: Int) = viewModelScope.launch {
+//        try {
+//            setState { copy(loading = true) }
+//            val breedData = breedRepository.getBreedById(breedId = breedId)
+//            setState {
+//                copy(
+//                    data = breedData,
+//                    loading = false
+//                )
+//            }
+//        } catch (error: Exception) {
+//            //
+//        }
+//    }
 
 
 

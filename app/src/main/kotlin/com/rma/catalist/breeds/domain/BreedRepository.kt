@@ -1,9 +1,13 @@
 package com.rma.catalist.breeds.domain
 
+import com.rma.catalist.breeds.api.BreedApi
+import com.rma.catalist.breeds.api.model.BreedApiModel
 import kotlinx.coroutines.flow.Flow
+import okhttp3.OkHttpClient
 
 interface BreedRepository {
 
-    suspend fun getAllBreeds() : List<Breed>
-    suspend fun getBreedById(breedId:Int) : Breed?
+    suspend fun fetchAllBreeds(): List<BreedApiModel>
+  //  suspend fun getAllBreeds() : List<Breed>
+  //  suspend fun getBreedById(breedId:Int) : Breed?
 }

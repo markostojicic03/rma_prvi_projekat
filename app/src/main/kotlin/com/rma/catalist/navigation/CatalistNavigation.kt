@@ -18,7 +18,7 @@ import com.rma.catalist.breeds.list.BreedListViewModel
 import com.rma.catalist.breeds.list.BreedListScreen
 
 
-private fun NavController.navigateToDetails(breedId: Int) {
+private fun NavController.navigateToDetails(breedId: String) {
     this.navigate(route = "details/$breedId")
 }
 
@@ -36,7 +36,7 @@ fun CatalistNavigation(){
             route = "details/{$BREED_ID_ARG}",
             arguments = listOf(
                 navArgument(name = BREED_ID_ARG){
-                    type = NavType.IntType
+                    type = NavType.StringType
                     nullable = false
                 }
             ),
@@ -68,7 +68,7 @@ private fun NavGraphBuilder.breedDetails(
 ) = composable(route = route, arguments = arguments){
     navBackStackEntry : NavBackStackEntry->
     val viewModel = hiltViewModel<BreedDetailsViewModel>()
-    val breedId = navBackStackEntry.arguments?.getInt(BREED_ID_ARG)
+    val breedId = navBackStackEntry.arguments?.getString(BREED_ID_ARG)
         ?: error("Breed ID is missing!")
     BreedDetailsScreen(
         viewModel = viewModel,
