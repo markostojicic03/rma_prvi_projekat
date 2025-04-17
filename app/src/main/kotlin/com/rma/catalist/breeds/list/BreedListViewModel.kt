@@ -39,18 +39,43 @@ class BreedListViewModel @Inject constructor (
         viewModelScope.launch {
             setState { copy(loading = true) }
             try {
-                val breeds = breedRepository.fetchAllBreeds().map { it.asBreedUiModel() }
+                val breeds = breedRepository.fetchAllBreeds().map { breedApiModel ->
+                    val imageUrl = try {
+                        breedRepository.fetchCatImage(breedApiModel.reference_image_id)
+                    } catch (e: Exception) {
+                        Log.e("ImageLoad", "Error loading image for ${breedApiModel.name}")
+                        null
+                    }
+
+                    breedApiModel.asBreedUiModel(imageUrl)
+                }
                 setState { copy(data = breeds) }
             } catch (error: Exception) {
-                // TODO Handle error
                 Log.d("test", "Failed to fetch.", error)
             } finally {
                 setState { copy(loading = false) }
             }
         }
+
+
+
+//        viewModelScope.launch {
+//            setState { copy(loading = true) }
+//            try {
+//                val breeds = breedRepository.fetchAllBreeds().map {
+//                    it.asBreedUiModel()
+//                }
+//                setState { copy(data = breeds) }
+//            } catch (error: Exception) {
+//                // TODO Handle error
+//                Log.d("test", "Failed to fetch.", error)
+//            } finally {
+//                setState { copy(loading = false) }
+//            }
+//        }
     }
 
-    private fun BreedApiModel.asBreedUiModel() = Breed(
+    private fun BreedApiModel.asBreedUiModel(imageForModel: String?) = Breed(
         weight = this.weight,
         id = this.id,
         name = this.name,
@@ -67,6 +92,8 @@ class BreedListViewModel @Inject constructor (
         rare = this.rare,
         wikipedia_url = this.wikipedia_url,
         reference_image_id = this.reference_image_id,
+        imageUrl = imageForModel,
+
     )
 /*
     private fun observeEvents() {

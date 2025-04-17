@@ -131,7 +131,7 @@ fun BreedListItem(
                 modifier = Modifier
                     .size(170.dp)
                     .padding(start = 5.dp, top = 55.dp),
-                model = "https://cdn2.thecatapi.com/images/" + data.reference_image_id+".jpg",
+                model = data.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
 //                                contentScale = ContentScale.Fit,
@@ -184,41 +184,6 @@ fun BreedListItem(
     }
 
 }
-
-
-
-//
-//  @Composable
-//  fun BreedListItem(
-//      data: Breed,
-//      onClick: (String) -> Unit,
-//  ) {
-//      Card(
-//          modifier = Modifier
-//              .height(100.dp)
-//              .fillMaxWidth()
-//              .padding(horizontal = 8.dp)
-//              .clip(CardDefaults.shape)
-//              .clickable { onClick(data.id) },
-//      ){Text(
-//          modifier = Modifier.padding(bottom = 8.dp),
-//          text = ItemContent(data),
-//      )
-//         if(!data.temperament.isEmpty()){
-//              var i = 0;
-//              for(trait in data.temperament){
-//                  if(i > 4) break;
-//                  SuggestionChipForTraits(trait)
-//                  i++
-//              }
-//          }
-//
-//      }
-//  }
-//
-//
-
-
 
 
 

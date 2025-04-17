@@ -23,6 +23,7 @@ data class Breed(
         val rare: Int,
         val wikipedia_url: String? = null,
         val reference_image_id: String? = null,
+        val imageUrl: String? = null,
 
 ) {
     companion object {

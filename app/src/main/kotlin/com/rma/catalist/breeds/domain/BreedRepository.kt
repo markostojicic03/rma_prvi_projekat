@@ -8,6 +8,6 @@ import okhttp3.OkHttpClient
 interface BreedRepository {
 
     suspend fun fetchAllBreeds(): List<BreedApiModel>
-  //  suspend fun getAllBreeds() : List<Breed>
-  //  suspend fun getBreedById(breedId:Int) : Breed?
+    suspend fun fetchCatImage(reference_imageId: String?): String?
+
 }

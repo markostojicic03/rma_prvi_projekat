@@ -39,13 +39,16 @@ class BreedRepositoryNetworking @Inject constructor(
         }
     }
 
-//
-//    override suspend fun getAllBreeds(): List<Breed> {
-//        TODO("Not yet implemented")
-//    }
-//
-//    override suspend fun getBreedById(breedId: Int): Breed? {
-//        TODO("Not yet implemented")
-//    }
+    override suspend fun fetchCatImage(reference_image_id: String?): String? {
+        return withContext(Dispatchers.IO) {
+            try {
+                breedApi.getImageUrl(reference_image_id).imageUrl
+            } catch (e: Exception) {
+                Log.e("BreedDebug", "Error fetching image URL")
+                null
+            }
+        }
+    }
+
 
 }
