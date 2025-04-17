@@ -14,12 +14,14 @@ interface BreedApi {
 
     @GET("breeds/{breed_id}")
     suspend fun getBreed(
-        @Path("id") breedId: String,
+        @Path("breed_id") breedId: String,
     ): BreedApiModel
 
     @GET("images/{image_id}")
     suspend fun getImageUrl(
         @Path("image_id") imageId: String?
     ): CatImageApiModel
+
+
 
 }

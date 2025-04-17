@@ -2,6 +2,7 @@ package com.rma.catalist.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -13,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.rma.catalist.breeds.details.BreedDetailsScreen
+import com.rma.catalist.breeds.details.BreedDetailsScreenContract
 import com.rma.catalist.breeds.details.BreedDetailsViewModel
 import com.rma.catalist.breeds.list.BreedListViewModel
 import com.rma.catalist.breeds.list.BreedListScreen
@@ -33,6 +35,7 @@ fun CatalistNavigation(){
         breedList(route = "start", navController = navController)
 
         breedDetails(
+
             route = "details/{$BREED_ID_ARG}",
             arguments = listOf(
                 navArgument(name = BREED_ID_ARG){
@@ -70,6 +73,13 @@ private fun NavGraphBuilder.breedDetails(
     val viewModel = hiltViewModel<BreedDetailsViewModel>()
     val breedId = navBackStackEntry.arguments?.getString(BREED_ID_ARG)
         ?: error("Breed ID is missing!")
+
+    val eventPublisherFromViewModel = viewModel::setEvent
+    LaunchedEffect(key1 = breedId) {
+        viewModel.setEvent(BreedDetailsScreenContract.UiEvent.OpenedScreen(breedId))
+    }
+
+    //eventPublisherFromViewModel(BreedDetailsScreenContract.UiEvent.OpenedScreen(breedId))
     BreedDetailsScreen(
         viewModel = viewModel,
         breedId = breedId,

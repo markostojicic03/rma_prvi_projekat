@@ -12,10 +12,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rma.catalist.core.compose.CatalistAppTopBar
+import com.rma.catalist.core.compose.LoadingIndicator
+import com.rma.catalist.core.compose.NoDataContent
 
 
 @Composable
@@ -25,6 +28,7 @@ fun BreedDetailsScreen(
     onClose: ()-> Unit
 ){
     val uiState = viewModel.state.collectAsState()
+
     BreedDetailsScreen(
         state = uiState.value,
         breedId = breedId,
@@ -50,19 +54,38 @@ fun BreedDetailsScreen(
             )
         }
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp, vertical = 32.dp)
-        ) {
 
-
-            Text(
-                text = "Stranica BreedDetails za id: $breedId"
-            )
-
-
+        if (state.loading) {
+            LoadingIndicator()
         }
+        else if (state.error != null) {
+            NoDataContent(
+                text = "Error = ${state.error.message}",
+            )
+        }
+        else{
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp, vertical = 32.dp)
+            ) {
+
+
+                Text(
+                    text = "Stranica BreedDetails za id: $breedId"
+                )
+
+                Text(
+                    text = "Ime rase: ${state.data?.name}"
+                )
+
+
+            }
+        }
+
     }
+
+
+
 }

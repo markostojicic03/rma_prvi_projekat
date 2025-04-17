@@ -8,10 +8,11 @@ interface BreedDetailsScreenContract {
         val breedId: String,
         val loading: Boolean = true,
         val data: Breed? = null,
+        val error: Throwable? = null,
     )
 
     sealed class UiEvent {
-        //
+        data class OpenedScreen(val breedId: String) : UiEvent()
     }
 
     sealed class SideEffect {

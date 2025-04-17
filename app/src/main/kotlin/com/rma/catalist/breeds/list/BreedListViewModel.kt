@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rma.catalist.breeds.api.model.BreedApiModel
 import com.rma.catalist.breeds.domain.Breed
-import com.rma.catalist.breeds.domain.BreedRepository
 import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class BreedListViewModel @Inject constructor (
@@ -30,16 +28,15 @@ class BreedListViewModel @Inject constructor (
     fun setEvent(event: BreedListScreenContract.BreedListUiEvent) = viewModelScope.launch { events.emit(event) }
 
     init {
-//        observeEvents()
-//        loadBreeds()
-        fetchAllBreeds()
+        loadBreeds()
     }
 
-    private fun fetchAllBreeds() {
+    private fun loadBreeds() {
         viewModelScope.launch {
             setState { copy(loading = true) }
             try {
                 val breeds = breedRepository.fetchAllBreeds().map { breedApiModel ->
+                    delay(500L)
                     val imageUrl = try {
                         breedRepository.fetchCatImage(breedApiModel.reference_image_id)
                     } catch (e: Exception) {
@@ -59,21 +56,8 @@ class BreedListViewModel @Inject constructor (
 
 
 
-//        viewModelScope.launch {
-//            setState { copy(loading = true) }
-//            try {
-//                val breeds = breedRepository.fetchAllBreeds().map {
-//                    it.asBreedUiModel()
-//                }
-//                setState { copy(data = breeds) }
-//            } catch (error: Exception) {
-//                // TODO Handle error
-//                Log.d("test", "Failed to fetch.", error)
-//            } finally {
-//                setState { copy(loading = false) }
-//            }
-//        }
     }
+
 
     private fun BreedApiModel.asBreedUiModel(imageForModel: String?) = Breed(
         weight = this.weight,
@@ -94,26 +78,7 @@ class BreedListViewModel @Inject constructor (
         reference_image_id = this.reference_image_id,
         imageUrl = imageForModel,
 
-    )
-/*
-    private fun observeEvents() {
-        viewModelScope.launch {
-            events.collect { event ->
-                when (event) {
-                    is BreedListScreenContract.BreedListUiEvent.LoadBreeds -> TODO()
-                    is BreedListScreenContract.BreedListUiEvent.SearchFilter -> TODO()
-                }
-            }
-        }
-    }
+        )
 
-    private fun loadBreeds() = viewModelScope.launch {
-        val data = breedRepository.getAllBreeds()
 
-        setState { copy(data = data, loading = false) }
-    }
-
-    private fun refreshData() = viewModelScope.launch {
-        delay(5.seconds)
-    }*/
 }
