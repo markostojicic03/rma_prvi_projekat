@@ -35,22 +35,50 @@ class BreedListViewModel @Inject constructor (
         viewModelScope.launch {
             setState { copy(loading = true) }
             try {
-                val breeds = breedRepository.fetchAllBreeds().map { breedApiModel ->
-                    delay(500L)
-                    val imageUrl = try {
-                        breedRepository.fetchCatImage(breedApiModel.reference_image_id)
-                    } catch (e: Exception) {
-                        Log.e("ImageLoad", "Error loading image for ${breedApiModel.name}")
-                        null
-                    }
+//                val breeds = breedRepository.fetchAllBreeds().map { breedApiModel ->
+//                    delay(500L)
+//                    val imageUrl = try {
+//                        breedRepository.fetchCatImage(breedApiModel.reference_image_id)
+//                    } catch (e: Exception) {
+//                        Log.e("ImageLoad", "Error loading image for ${breedApiModel.name}")
+//                        null
+//                    }
+//
+//                    breedApiModel.asBreedUiModel(imageUrl)
+//                }
+//                setState { copy(data = breeds) }
 
-                    breedApiModel.asBreedUiModel(imageUrl)
+                val breedsFromApi = breedRepository.fetchAllBreeds()
+                val breedList = breedsFromApi.map { it.asBreedUiModel(null) }
+
+
+                setState { copy(data = breedList, loading = false) }
+
+                // 3. Lazy
+                breedList.forEachIndexed { index, breed ->
+
+                        val imageUrl = try {
+                            breedRepository.fetchCatImage(breed.reference_image_id)
+                        } catch (e: Exception) {
+                            Log.e("ImageLoad", "Error loading image for ${breed.name}", e)
+                            null
+                        }
+
+                        imageUrl?.let {
+                            val updatedBreed = breed.copy(imageUrl = it)
+
+                            setState {
+                                val newList = data.toMutableList()
+                                newList[index] = updatedBreed
+                                copy(data = newList)
+                            }
+                        }
+
                 }
-                setState { copy(data = breeds) }
             } catch (error: Exception) {
                 Log.d("test", "Failed to fetch.", error)
             } finally {
-                setState { copy(loading = false) }
+                //setState { copy(loading = false) }
             }
         }
 

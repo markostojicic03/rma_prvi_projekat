@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +46,7 @@ import com.rma.catalist.core.compose.CatalistAppTopBar
 import com.rma.catalist.core.compose.LoadingIndicator
 import com.rma.catalist.core.compose.NoDataContent
 import com.rma.catalist.theme.PurpleGrey80
+import com.rma.catalist.R
 
 @Composable
 fun BreedListScreen(
@@ -73,7 +76,7 @@ private fun BreedListScreen(
         topBar = {
             CatalistAppTopBar(
                 text = "Breed List",
-                navigationIcon = Icons.Filled.Menu,
+                navigationIcon = Icons.Default.Menu,
                 navigationOnClick = null, /// ISPRAVITI
                 actionIcon = Icons.Default.Search,
                 actionOnClick = null //ISPRAVITI
@@ -120,17 +123,50 @@ fun BreedListItem(
 ) {
     Card(
         modifier = Modifier
-            //.height(500.dp)
+            //.height(350.dp)
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 8.dp)
             .clip(CardDefaults.shape)
             .clickable { onClick(data.id) },
     ){
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 5.dp, bottom = 5.dp, start = 3.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+
+                text = buildAnnotatedString{
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(data.name) }
+
+                },
+            )
+
+            if(data.alt_names != null && data.alt_names.isNotEmpty() && (!data.alt_names.isBlank())){
+                Text(
+                    text = buildAnnotatedString{
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
+                            append("(")
+                            append(data.alt_names)
+                            append(")")
+                            append("\n")
+
+                        }
+                    }
+                )
+
+            }
+
+
+        }
+
+
         Row {
+
             SubcomposeAsyncImage(
                 modifier = Modifier
                     .size(170.dp)
-                    .padding(start = 5.dp, top = 55.dp),
+                    .padding(start = 5.dp),
                 model = data.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
@@ -161,7 +197,7 @@ fun BreedListItem(
                 }
             )
             Column(
-                modifier = Modifier.padding(bottom = 8.dp, start = 15.dp ),
+                modifier = Modifier.padding(horizontal = 10.dp),
             ){
                 ItemContent(data)
             }
@@ -208,31 +244,10 @@ fun ItemContent(
 
     Text(
         text = buildAnnotatedString{
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Breed Name: "+ data.name + "\n") }
-        }
-    )
-
-    if(data.alt_names != null && data.alt_names.isNotEmpty()){
-        Text(
-            text = buildAnnotatedString{
-                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
-                    append("Alternative Breed Names: ")
-                    append(data.alt_names)
-                    append("\n")
-
-                }
-            }
-        )
-
-    }
-
-
-    Text(
-        text = buildAnnotatedString{
             var i = 1
 
             for(chr in data.description.toCharArray()){
-                if(i > 250){
+                if(i > 100){
                     append("...")
                     break
                 }
