@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.material3.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.*
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -33,30 +34,49 @@ import androidx.compose.ui.graphics.vector.ImageVector
         navigationOnClick: (() -> Unit)? = null,
         actionIcon: ImageVector? = null,
         actionOnClick: (() -> Unit)? = null,
+        isSearching: Boolean = false,
+        searchQuery: String = "",
+        onSearchQueryChange: ((String) -> Unit)? = null,
     ): Unit{
     CenterAlignedTopAppBar(
         modifier = modifier,
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
-        navigationIcon = {
-            if (navigationIcon != null) {
-                AppTopBarIcon(
-                    icon = navigationIcon,
-                    onClick = { navigationOnClick?.invoke() },
+        title = {
+            if (isSearching) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { onSearchQueryChange?.invoke(it) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 8.dp),
+                    singleLine = true,
+                    placeholder = { Text("Search breed...") } ,
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            onSearchQueryChange?.invoke("")
+                            actionOnClick?.invoke()
+
+                        }) {
+                            Icon(Icons.Default.Close, contentDescription = "Clear")
+                        }
+                    }
                 )
+            } else {
+                Text(text)
             }
         },
-        title = {
-            Text(text = text)
+        navigationIcon = {
+            IconButton(onClick = { navigationOnClick?.invoke() }) {
+                Icon(imageVector = navigationIcon!!, contentDescription = "Menu")
+            }
         },
         actions = {
-            if (actionIcon != null) {
+            if (actionIcon != null && !isSearching) {
                 AppTopBarIcon(
                     icon = actionIcon,
                     onClick = { actionOnClick?.invoke() }
                 )
             }
-        },
-
+        }
     )
 }
 

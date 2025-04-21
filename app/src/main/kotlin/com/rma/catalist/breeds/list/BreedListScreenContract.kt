@@ -8,14 +8,18 @@ interface BreedListScreenContract {
         val loading: Boolean = true,
         val data: List<Breed> = emptyList(),
         val error: Throwable? = null,
-        // dodati za search i selektovanu macku?
+
+
+
+        val searchData: List<Breed> = emptyList(),
+        val isSearching: Boolean = false,
         val search: String = "",
-        val selectedBreed : Int? = null
     )
 
     sealed class BreedListUiEvent {
         data class SearchFilter(val query: String) : BreedListUiEvent()// kada korisnik kuca u pretrazi ime rase macke
-        object LoadBreeds : BreedListUiEvent() // ucitavamo rase macaka
+        object OnToggleSearchClick: BreedListUiEvent()
+        data object OnSearchClosed : BreedListUiEvent()
     }
 
 }

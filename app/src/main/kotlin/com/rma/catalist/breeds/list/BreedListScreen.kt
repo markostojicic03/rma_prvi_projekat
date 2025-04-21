@@ -77,9 +77,20 @@ private fun BreedListScreen(
             CatalistAppTopBar(
                 text = "Breed List",
                 navigationIcon = Icons.Default.Menu,
-                navigationOnClick = null, /// ISPRAVITI
+                navigationOnClick = null,
                 actionIcon = Icons.Default.Search,
-                actionOnClick = null //ISPRAVITI
+                actionOnClick =  {
+                    if (state.isSearching) {
+                        eventPublisher(BreedListScreenContract.BreedListUiEvent.OnSearchClosed)
+                    } else {
+                        eventPublisher(BreedListScreenContract.BreedListUiEvent.OnToggleSearchClick)
+                    }
+                },
+                isSearching = state.isSearching,
+                searchQuery = state.search,
+                onSearchQueryChange = {
+                    eventPublisher(BreedListScreenContract.BreedListUiEvent.SearchFilter(it))
+                }
             )
         }
     ) { padding ->
@@ -103,12 +114,19 @@ private fun BreedListScreen(
                     .padding(padding)
 
             ) {
-                state.data.forEach { breed ->
+                val listToDisplay = if (state.isSearching && state.search.isNotBlank()) {
+                    state.searchData
+                } else {
+                    state.data
+                }
+
+                listToDisplay.forEach { breed ->
                     BreedListItem(
                         data = breed,
                         onClick = { onBreedClick?.invoke(breed.id) }
                     )
                 }
+
             }
         }
     }

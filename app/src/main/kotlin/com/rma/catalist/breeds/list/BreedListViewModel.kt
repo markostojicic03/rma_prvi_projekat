@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rma.catalist.breeds.api.model.BreedApiModel
+import com.rma.catalist.breeds.details.BreedDetailsScreenContract
 import com.rma.catalist.breeds.domain.Breed
 import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,38 +25,28 @@ class BreedListViewModel @Inject constructor (
     private val _state = MutableStateFlow(BreedListScreenContract.BreedListUiState())
     val state = _state.asStateFlow()
 
+    private var allBreeds : MutableList<Breed> = mutableListOf()
     private fun setState(reducer: BreedListScreenContract.BreedListUiState.() -> BreedListScreenContract.BreedListUiState) = _state.getAndUpdate(reducer)
     private val events = MutableSharedFlow<BreedListScreenContract.BreedListUiEvent>()
     fun setEvent(event: BreedListScreenContract.BreedListUiEvent) = viewModelScope.launch { events.emit(event) }
 
     init {
         loadBreeds()
+        observeEvents()
     }
 
     private fun loadBreeds() {
         viewModelScope.launch {
             setState { copy(loading = true) }
             try {
-//                val breeds = breedRepository.fetchAllBreeds().map { breedApiModel ->
-//                    delay(500L)
-//                    val imageUrl = try {
-//                        breedRepository.fetchCatImage(breedApiModel.reference_image_id)
-//                    } catch (e: Exception) {
-//                        Log.e("ImageLoad", "Error loading image for ${breedApiModel.name}")
-//                        null
-//                    }
-//
-//                    breedApiModel.asBreedUiModel(imageUrl)
-//                }
-//                setState { copy(data = breeds) }
 
                 val breedsFromApi = breedRepository.fetchAllBreeds()
                 val breedList = breedsFromApi.map { it.asBreedUiModel(null) }
-
+                allBreeds = breedList as MutableList<Breed>
 
                 setState { copy(data = breedList, loading = false) }
 
-                // 3. Lazy
+                //Lazy
                 breedList.forEachIndexed { index, breed ->
 
                         val imageUrl = try {
@@ -85,6 +77,48 @@ class BreedListViewModel @Inject constructor (
 
 
     }
+
+    private fun observeEvents(){
+        viewModelScope.launch {
+            events.collect { event ->
+                when(event){
+                    is BreedListScreenContract.BreedListUiEvent.SearchFilter -> {
+                        val queryTemp =  event.query
+                     //   val breedsSearchFromApi = breedRepository.fetchSearchBreeds(queryTemp)
+                        val breedSearchList = breedRepository.fetchSearchBreeds(queryTemp, allBreeds )
+
+                        if (breedSearchList != null) {
+                            setState {
+                                copy(
+                                    searchData = breedSearchList,
+                                    search = queryTemp,
+                                    loading = false
+                                )
+                            }
+                        }
+
+                        Log.d("BreedDebug","SEARCHED LISTA U MODEL VIEW: " +breedSearchList.toString())
+                    }
+
+                    BreedListScreenContract.BreedListUiEvent.OnToggleSearchClick -> {
+                        _state.update {
+                           it.copy(isSearching = !it.isSearching, search = "")
+                        }
+                    }
+                    BreedListScreenContract.BreedListUiEvent.OnSearchClosed -> {
+                        _state.update {
+                            it.copy( isSearching = false, search = "", searchData = emptyList())
+                        }
+                    }
+
+                }
+
+            }
+        }
+    }
+
+
+
 
 
     private fun BreedApiModel.asBreedUiModel(imageForModel: String?) = Breed(

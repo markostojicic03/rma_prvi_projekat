@@ -5,6 +5,7 @@ import com.rma.catalist.breeds.api.model.BreedApiModel
 import com.rma.catalist.breeds.api.model.CatImageApiModel
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface BreedApi {
 
@@ -21,6 +22,12 @@ interface BreedApi {
     suspend fun getImageUrl(
         @Path("image_id") imageId: String?
     ): CatImageApiModel
+
+
+    @GET("breeds/search")
+    suspend fun  getSearchingBreed(
+        @Query("q") query: String?
+    ): List<BreedApiModel>
 
 
 

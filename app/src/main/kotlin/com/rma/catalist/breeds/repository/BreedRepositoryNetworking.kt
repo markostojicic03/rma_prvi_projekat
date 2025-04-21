@@ -4,6 +4,7 @@ import android.util.Log
 import coil3.network.HttpException
 import com.rma.catalist.breeds.api.BreedApi
 import com.rma.catalist.breeds.api.model.BreedApiModel
+import com.rma.catalist.breeds.domain.Breed
 import com.rma.catalist.breeds.domain.BreedRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -103,6 +104,13 @@ class BreedRepositoryNetworking @Inject constructor(
                 null
             }
         }
+    }
+
+    override  suspend fun  fetchSearchBreeds(query: String, dataAllBreeds: List<Breed>): List<Breed>?{
+        Log.d("BreedDebug", "fetchSearchBreeds() called")
+        Log.d("BreedDebug", "CELA LISTA U REPOSIT: "+dataAllBreeds.toString())
+
+        return dataAllBreeds.filter { it.name.contains(query, ignoreCase = true) }
     }
 
 

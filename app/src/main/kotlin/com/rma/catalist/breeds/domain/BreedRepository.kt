@@ -10,5 +10,6 @@ interface BreedRepository {
     suspend fun fetchAllBreeds(): List<BreedApiModel>
     suspend fun fetchCatImage(reference_imageId: String?): String?
     suspend fun fetchBreedById(breedId: String): BreedApiModel?
+    suspend fun  fetchSearchBreeds(query: String, dataAllBreeds: List<Breed>): List<Breed>?
 
 }
