@@ -110,6 +110,8 @@ class BreedRepositoryNetworking @Inject constructor(
         Log.d("BreedDebug", "fetchSearchBreeds() called")
         Log.d("BreedDebug", "CELA LISTA U REPOSIT: "+dataAllBreeds.toString())
 
+
+
         return dataAllBreeds.filter { it.name.contains(query, ignoreCase = true) }
     }
 

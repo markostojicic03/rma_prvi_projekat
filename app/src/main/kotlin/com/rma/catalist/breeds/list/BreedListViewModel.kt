@@ -64,6 +64,11 @@ class BreedListViewModel @Inject constructor (
                                 newList[index] = updatedBreed
                                 copy(data = newList)
                             }
+
+                            // Ažuriraj i allBreeds za search
+                            allBreeds = allBreeds.toMutableList().also {
+                                it[index] = updatedBreed
+                            }
                         }
 
                 }
@@ -95,17 +100,20 @@ class BreedListViewModel @Inject constructor (
                                     loading = false
                                 )
                             }
+
+
                         }
+
 
                         Log.d("BreedDebug","SEARCHED LISTA U MODEL VIEW: " +breedSearchList.toString())
                     }
 
-                    BreedListScreenContract.BreedListUiEvent.OnToggleSearchClick -> {
+                    is BreedListScreenContract.BreedListUiEvent.OnToggleSearchClick -> {
                         _state.update {
                            it.copy(isSearching = !it.isSearching, search = "")
                         }
                     }
-                    BreedListScreenContract.BreedListUiEvent.OnSearchClosed -> {
+                    is BreedListScreenContract.BreedListUiEvent.OnSearchClosed -> {
                         _state.update {
                             it.copy( isSearching = false, search = "", searchData = emptyList())
                         }
