@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
 
@@ -37,7 +39,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
         isSearching: Boolean = false,
         searchQuery: String = "",
         onSearchQueryChange: ((String) -> Unit)? = null,
-    ): Unit{
+    ){
     CenterAlignedTopAppBar(
         modifier = modifier,
         title = {
@@ -66,7 +68,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
         },
         navigationIcon = {
             IconButton(onClick = { navigationOnClick?.invoke() }) {
-                Icon(imageVector = navigationIcon!!, contentDescription = "Menu")
+                Icon(
+                    imageVector = navigationIcon!!,
+                    contentDescription = "Menu",
+                    modifier = Modifier.size(80.dp),
+                    tint = Color.Unspecified // onemogućava automatsko skaliranje unutar 24dp
+                )
             }
         },
         actions = {

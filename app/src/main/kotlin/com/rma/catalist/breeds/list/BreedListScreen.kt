@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Downloading
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -27,14 +28,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +51,7 @@ import com.rma.catalist.core.compose.LoadingIndicator
 import com.rma.catalist.core.compose.NoDataContent
 import com.rma.catalist.theme.PurpleGrey80
 import com.rma.catalist.R
+import com.rma.catalist.theme.OrangeLogoColor
 
 @Composable
 fun BreedListScreen(
@@ -76,8 +81,10 @@ private fun BreedListScreen(
         topBar = {
             CatalistAppTopBar(
                 text = "Breed List",
-                navigationIcon = Icons.Default.Menu,
-                navigationOnClick = null,
+                navigationIcon = ImageVector.vectorResource(id = R.drawable.logo_catalist__1_),
+                navigationOnClick = {
+                    Log.d("BreedDebug", "alo")
+                },
                 actionIcon = Icons.Default.Search,
                 actionOnClick =  {
                     if (state.isSearching) {
@@ -184,7 +191,13 @@ fun BreedListItem(
             SubcomposeAsyncImage(
                 modifier = Modifier
                     .size(170.dp)
-                    .padding(start = 5.dp),
+                    .padding(start = 5.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .border(
+                        width = 3.dp,
+                        color = OrangeLogoColor,
+                        shape = RoundedCornerShape(12.dp)
+                    ),
                 model = data.imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
@@ -208,7 +221,7 @@ fun BreedListItem(
                         contentAlignment = Alignment.Center,
                     ) {
                         Image(
-                            imageVector = Icons.Default.Error,
+                            imageVector = Icons.Default.Downloading,
                             contentDescription = null
                         )
                     }
