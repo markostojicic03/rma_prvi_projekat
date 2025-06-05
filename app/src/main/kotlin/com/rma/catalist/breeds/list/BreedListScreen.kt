@@ -83,7 +83,7 @@ private fun BreedListScreen(
         topBar = {
             CatalistAppTopBar(
                 text = "Breed List",
-                navigationIcon = ImageVector.vectorResource(id = R.drawable.logo_catalist__1_),
+                navigationIcon = ImageVector.vectorResource(id = R.drawable.logo_catalist_1_),
                 navigationOnClick = {
                     Log.d("BreedDebug", "alo")
                 },

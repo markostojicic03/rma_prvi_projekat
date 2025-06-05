@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.jetpack.room)
 }
 
 android {
@@ -50,6 +51,10 @@ android {
     hilt {
         enableAggregatingTask = true
     }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -76,6 +81,7 @@ dependencies {
     // DI
     ksp(libs.bundles.hilt.compiler)
     implementation(libs.bundles.hilt)
+
     // KotlinX Serialization
     implementation(libs.kotlinx.serialization.json)
 
@@ -91,6 +97,12 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+    // Room
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // Tests
     testImplementation(libs.junit)
