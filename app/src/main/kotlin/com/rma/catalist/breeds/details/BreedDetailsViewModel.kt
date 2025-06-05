@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rma.catalist.breeds.api.model.BreedApiModel
 import com.rma.catalist.breeds.domain.Breed
-import com.rma.catalist.breeds.domain.BreedRepository
+import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import com.rma.catalist.navigation.breedIdOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BreedDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val breedRepository: BreedRepository,
+    private val breedRepository: BreedRepositoryNetworking,
 ): ViewModel() {
 
 

@@ -26,5 +26,5 @@ data class BreedDb(
     val rare: Int,
     val wikipedia_url: String,
     val reference_image_id: String,
-    val imageUrl: String,
+//    val imageUrl: String,
 )

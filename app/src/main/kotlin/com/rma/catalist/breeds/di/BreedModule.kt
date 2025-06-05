@@ -1,7 +1,6 @@
 package com.rma.catalist.breeds.di
 
 import com.rma.catalist.breeds.api.BreedApi
-import com.rma.catalist.breeds.domain.BreedRepository
 import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import dagger.Module
 import dagger.Provides
@@ -21,11 +20,11 @@ object BreedModule {
     fun provideBreedApi(retrofit: Retrofit) = retrofit.create(BreedApi::class.java)
 
 
-    @Provides
-    @Singleton
-    fun provideBreedRepository(
-        breedApi: BreedApi,
-        okHttpClient: OkHttpClient
-    ): BreedRepository = BreedRepositoryNetworking(breedApi, okHttpClient)
+//    @Provides
+//    @Singleton
+//    fun provideBreedRepository(
+//        breedApi: BreedApi,
+//        okHttpClient: OkHttpClient
+//    ): BreedRepository = BreedRepositoryNetworking(breedApi, okHttpClient)
 
 }
