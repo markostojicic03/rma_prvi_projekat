@@ -1,7 +1,12 @@
 package com.rma.catalist.breeds.map
 
+import androidx.compose.ui.Modifier
 import com.rma.catalist.breeds.api.model.BreedApiModel
+import com.rma.catalist.breeds.api.model.CatImageApiModel
+import com.rma.catalist.breeds.api.model.Weight
+import com.rma.catalist.breeds.domain.Breed
 import com.rma.catalist.db.entities.BreedDb
+import com.rma.catalist.db.entities.ImageDb
 
 fun BreedApiModel.asBreedDb(): BreedDb {
     return BreedDb(
@@ -15,7 +20,6 @@ fun BreedApiModel.asBreedDb(): BreedDb {
         weightImperial = weight?.imperial ?: "",
         weightMetric = weight?.metric ?: "",
 
-        // traits
         energy_level = energy_level ?: 0,
         affection_level = affection_level ?: 0,
         child_friendly = child_friendly ?: 0,
@@ -24,7 +28,42 @@ fun BreedApiModel.asBreedDb(): BreedDb {
         rare = rare ?: -1,
 
         wikipedia_url = wikipedia_url ?:"",
-        reference_image_id = reference_image_id ?:""
+        reference_image_id = reference_image_id ?:"",
+        imageUrl =  imageUrl.toString(),
+
     )
 }
+fun BreedDb.asBreed(): Breed {
+    return Breed(
+        id = id,
+        name = name,
+        alt_names = altNames,
+        description = description,
+        temperament = temperament.split(", "),
+        origin = origin,
+        life_span = lifeSpan,
+        vocalisation = vocalisation,
+        affection_level = affection_level,
+        child_friendly = child_friendly,
+        energy_level = energy_level,
+        health_issues = health_issues,
+        rare = rare,
+        wikipedia_url = wikipedia_url,
+        reference_image_id = reference_image_id,
+        weight = Weight(weightImperial, weightMetric),
+    )
+}
+
+
+fun CatImageApiModel.asImageDb(): ImageDb {
+    return ImageDb(
+        id = id,
+        url = imageUrl.toString(),
+        breedId = breeds.firstOrNull()?.id.toString(),
+        width = width,
+        height = height
+    )
+}
+
+
 

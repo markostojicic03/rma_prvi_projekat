@@ -20,5 +20,8 @@ interface ImageDao {
 
     @Query("SELECT * FROM Image WHERE breedId = :breedId")
     fun observeAllForBreed(breedId: String): Flow<List<ImageDb>>
-    
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(imageDbModel: ImageDb)
+
 }

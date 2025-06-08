@@ -327,7 +327,7 @@ fun TraitDotsIndicator(
                 Icon(
                     imageVector = Icons.Filled.Circle,
                     contentDescription = null,
-                    tint = androidx.compose.ui.graphics.Color(0xFF00CBCB),
+                    tint = androidx.compose.ui.graphics.Color(0xFFEA681C),
                     modifier = Modifier
                         .size(16.dp)
                         .padding(end = 4.dp)

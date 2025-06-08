@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -83,7 +85,7 @@ private fun BreedListScreen(
         topBar = {
             CatalistAppTopBar(
                 text = "Breed List",
-                navigationIcon = ImageVector.vectorResource(id = R.drawable.logo_catalist_1_),
+                navigationIcon = ImageVector.vectorResource(id = R.drawable.svgpersan),
                 navigationOnClick = {
                     Log.d("BreedDebug", "alo")
                 },
@@ -167,10 +169,12 @@ fun BreedListItem(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(data.name) }
 
                 },
+                fontWeight = FontWeight.Bold,
             )
 
             if(data.alt_names != null && data.alt_names.isNotEmpty() && (!data.alt_names.isBlank())){
                 Text(
+                    fontWeight = FontWeight.Bold,
                     text = buildAnnotatedString{
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
                             append("(")
@@ -197,7 +201,8 @@ fun BreedListItem(
                     .clip(RoundedCornerShape(12.dp))
                     .border(
                         width = 3.dp,
-                        color = OrangeLogoColor,
+                        color = if(isSystemInDarkTheme()){ androidx.compose.ui.graphics.Color(0xFFFFB74D)} else{ androidx.compose.ui.graphics.Color(0xFFFFCC80)},
+                        // ne prima ovde boje kao varijablu(one koje sam definisao u Colors, pa sam definisao opet)
                         shape = RoundedCornerShape(12.dp)
                     ),
                 model = data.imageUrl,

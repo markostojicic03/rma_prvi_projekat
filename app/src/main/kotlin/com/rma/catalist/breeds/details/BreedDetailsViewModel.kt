@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rma.catalist.breeds.api.model.BreedApiModel
 import com.rma.catalist.breeds.domain.Breed
+import com.rma.catalist.breeds.map.asBreed
 import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import com.rma.catalist.navigation.breedIdOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,22 +42,36 @@ class BreedDetailsViewModel @Inject constructor(
 
     init {
         observeEvents()
-
+        observeBreedDetails()
     }
 
 
-    private fun observeEvents(){
+    private fun observeBreedDetails() {
+        Log.d("CATALIST", "observeBreedDetails: start")
+
         viewModelScope.launch {
+            breedRepository.observeBreedDetails(breedId = breedId)
+                .onStart { Log.d("CATALIST", "Waiting for emissions...") }
+                .filterNotNull()
+                .collect {
+                    Log.d("CATALIST", "Received data: $it")
+                    setState { copy(data = it.asBreed(), loading = false) }
+                }
+        }
+    }
+
+    private fun observeEvents(){
+      /*  viewModelScope.launch {
             events.collect { event ->
                 when(event){
                     is BreedDetailsScreenContract.UiEvent.OpenedScreen -> loadBreedDetails()
                 }
 
             }
-        }
+        }*/
     }
 
-
+/*
 
     private fun loadBreedDetails() {
         viewModelScope.launch {
@@ -80,7 +97,7 @@ class BreedDetailsViewModel @Inject constructor(
             }
         }
     }
-
+*/
     private fun BreedApiModel.asBreedUiModel(imageForModel: String?) = Breed(
         weight = this.weight,
         id = this.id,
@@ -101,24 +118,6 @@ class BreedDetailsViewModel @Inject constructor(
         imageUrl = imageForModel,
 
         )
-
-
-
-
-//    private fun loadBreeds(breedId: Int) = viewModelScope.launch {
-//        try {
-//            setState { copy(loading = true) }
-//            val breedData = breedRepository.getBreedById(breedId = breedId)
-//            setState {
-//                copy(
-//                    data = breedData,
-//                    loading = false
-//                )
-//            }
-//        } catch (error: Exception) {
-//            //
-//        }
-//    }
 
 
 

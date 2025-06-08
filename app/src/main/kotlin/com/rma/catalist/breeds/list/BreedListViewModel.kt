@@ -4,14 +4,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rma.catalist.breeds.api.model.BreedApiModel
-import com.rma.catalist.breeds.details.BreedDetailsScreenContract
 import com.rma.catalist.breeds.domain.Breed
+import com.rma.catalist.breeds.map.asBreed
 import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,16 +26,50 @@ class BreedListViewModel @Inject constructor (
     private val _state = MutableStateFlow(BreedListScreenContract.BreedListUiState())
     val state = _state.asStateFlow()
 
-    private var allBreeds : MutableList<Breed> = mutableListOf()
+
     private fun setState(reducer: BreedListScreenContract.BreedListUiState.() -> BreedListScreenContract.BreedListUiState) = _state.getAndUpdate(reducer)
     private val events = MutableSharedFlow<BreedListScreenContract.BreedListUiEvent>()
     fun setEvent(event: BreedListScreenContract.BreedListUiEvent) = viewModelScope.launch { events.emit(event) }
 
     init {
-        loadBreeds()
         observeEvents()
+        fetchAllUsers()
+        observeBreeds()
     }
 
+    private fun fetchAllUsers() {
+        viewModelScope.launch {
+
+            ensureActive()
+
+            setState { copy(loading = true) }
+            try {
+                breedRepository.fetchAllBreedsAndStore()
+                breedRepository.fetchAndStoreImagesForAllBreeds() // <-- dodato
+            } catch (error: Exception) {
+                Log.e("BreedDebug", "Nesto je trulo u drzavi danskoj(fetchallUsers iz BreedListViewModel)", error)
+            } finally {
+                setState { copy(loading = false) }
+            }
+        }
+    }
+    private fun observeBreeds() {
+        viewModelScope.launch {
+            setState { copy(loading = true) }
+            breedRepository.observeAllBreedsRepository()
+                .distinctUntilChanged()
+                .collect {
+                    setState {
+                        copy(
+                            loading = false,
+                            data = it.map { it.asBreed() },
+                        )
+                    }
+                }
+        }
+    }
+
+/*
     private fun loadBreeds() {
         viewModelScope.launch {
             setState { copy(loading = true) }
@@ -82,7 +117,7 @@ class BreedListViewModel @Inject constructor (
 
 
     }
-
+*/
     private fun observeEvents(){
         viewModelScope.launch {
             events.collect { event ->
@@ -90,7 +125,7 @@ class BreedListViewModel @Inject constructor (
                     is BreedListScreenContract.BreedListUiEvent.SearchFilter -> {
                         val queryTemp =  event.query
                      //   val breedsSearchFromApi = breedRepository.fetchSearchBreeds(queryTemp)
-                        val breedSearchList = breedRepository.fetchSearchBreeds(queryTemp, allBreeds )
+                        val breedSearchList = breedRepository.fetchSearchBreeds(queryTemp, state.value.data )
 
                         if (breedSearchList != null) {
                             setState {
@@ -146,7 +181,6 @@ class BreedListViewModel @Inject constructor (
         rare = this.rare,
         wikipedia_url = this.wikipedia_url,
         reference_image_id = this.reference_image_id,
-        imageUrl = imageForModel,
 
         )
 

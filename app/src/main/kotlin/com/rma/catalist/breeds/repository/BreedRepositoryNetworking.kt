@@ -1,27 +1,62 @@
 package com.rma.catalist.breeds.repository
 
 import android.util.Log
-import coil3.network.HttpException
 import com.rma.catalist.breeds.api.BreedApi
 import com.rma.catalist.breeds.api.model.BreedApiModel
 import com.rma.catalist.breeds.domain.Breed
-import kotlinx.coroutines.CancellationException
+import com.rma.catalist.breeds.map.asBreedDb
+import com.rma.catalist.breeds.map.asImageDb
+import com.rma.catalist.db.AppDatabase
+import com.rma.catalist.db.dao.ImageDao
+import com.rma.catalist.db.entities.BreedDb
+import com.rma.catalist.db.entities.ImageDb
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 class BreedRepositoryNetworking @Inject constructor(
     private val breedApi: BreedApi,
-    private val okHttpClient: OkHttpClient
+    private val okHttpClient: OkHttpClient,
+    private val database: AppDatabase,
 ){
 
     init {
         Log.d("BreedDebug", "BreedRepositoryNetworking created")
     }
 
+    suspend fun fetchAllBreedsAndStore() =  withContext(Dispatchers.IO) {
+        val users = breedApi.getAllBreeds()
+        database.breedDao().insertAll(
+            list = users.map { it.asBreedDb() },
+        )
+    }
 
+    fun observeAllBreedsRepository() = database.breedDao().observeAllBreedsDao() // vraca flow podatka iz baze
+
+
+    fun observeBreedDetails(breedId: String) = database.breedDao().observeBreedById(breedId)// isto kao sto asm gore uradio za sve rase, tako ovde samo za jednu specificnu
+
+    suspend fun fetchAndStoreImagesForAllBreeds() = withContext(Dispatchers.IO) {
+        val breedList = database.breedDao().getAll() // suspend funkcija iz DAO-a
+
+        breedList.forEach { breed ->
+            val refId = breed.reference_image_id
+            if (!refId.isNullOrBlank()) {
+                try {
+                    val imageResponse = breedApi.getImageUrl(refId)
+                    val imageDb = imageResponse.asImageDb()
+                    database.imageDao().insert(imageDb)
+                    breed.imageUrl = imageResponse.imageUrl.toString()
+                } catch (e: Exception) {
+                    Log.e("ImageLoad", "Failed for breed ${breed.id}", e)
+                }
+            }
+        }
+    }
+
+/*
     suspend fun fetchAllBreeds(
 
     ): List<BreedApiModel> {
@@ -64,9 +99,9 @@ class BreedRepositoryNetworking @Inject constructor(
             }
         }
     }
+*/
 
-
-    suspend fun fetchBreedById(breedId: String): BreedApiModel? {
+   /* suspend fun fetchBreedById(breedId: String): BreedApiModel? {
         Log.d("BreedDebug", "fetchBreedsById() called")
         return  withContext(Dispatchers.IO){
             try {
@@ -77,7 +112,7 @@ class BreedRepositoryNetworking @Inject constructor(
                 null
             }
         }
-    }
+    }*/
 
     suspend fun  fetchSearchBreeds(query: String, dataAllBreeds: List<Breed>): List<Breed>?{
         Log.d("BreedDebug", "fetchSearchBreeds() called")

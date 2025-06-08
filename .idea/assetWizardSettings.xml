@@ -92,7 +92,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="C:\Users\Marko\Desktop\Logo catalist.png" />
+                                                <entry key="imagePath" value="C:\Users\Marko\Desktop\persiancat.jpg" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -124,7 +125,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="generateWebpIcons" value="false" />
+                                      <entry key="generateLegacyIcon" value="false" />
+                                      <entry key="generatePlayStoreIcon" value="false" />
+                                      <entry key="outputName" value="persancat" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -293,6 +296,29 @@
                                 </PersistentState>
                               </value>
                             </entry>
+                          </map>
+                        </option>
+                      </PersistentState>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </PersistentState>
+          </value>
+        </entry>
+        <entry key="vectorWizard">
+          <value>
+            <PersistentState>
+              <option name="children">
+                <map>
+                  <entry key="vectorAssetStep">
+                    <value>
+                      <PersistentState>
+                        <option name="values">
+                          <map>
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="svgpersan" />
+                            <entry key="sourceFile" value="C:\Users\Marko\Desktop\svgpersan.svg" />
                           </map>
                         </option>
                       </PersistentState>

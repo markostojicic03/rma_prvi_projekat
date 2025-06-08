@@ -18,8 +18,8 @@ import androidx.room.PrimaryKey
     ]
 )
 data class ImageDb(
-    @PrimaryKey val id: String,
-    val url: String,
+    val id: String,
+    @PrimaryKey val url: String,
     val breedId: String,
     val width: Int,
     val height: Int,

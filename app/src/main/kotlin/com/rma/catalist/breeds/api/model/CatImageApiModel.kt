@@ -5,5 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CatImageApiModel(
-    @SerialName("url")val imageUrl : String?
+    @SerialName("url")val imageUrl : String?,
+    val id: String,
+    val breeds: List<BreedApiModel> = emptyList(),
+    val width: Int,
+    val height: Int,
 )
