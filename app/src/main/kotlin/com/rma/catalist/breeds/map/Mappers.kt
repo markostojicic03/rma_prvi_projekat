@@ -51,6 +51,7 @@ fun BreedDb.asBreed(): Breed {
         wikipedia_url = wikipedia_url,
         reference_image_id = reference_image_id,
         weight = Weight(weightImperial, weightMetric),
+        imageUrl = imageUrl,
     )
 }
 

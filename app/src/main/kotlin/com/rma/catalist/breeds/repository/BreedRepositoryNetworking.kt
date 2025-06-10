@@ -11,6 +11,7 @@ import com.rma.catalist.db.dao.ImageDao
 import com.rma.catalist.db.entities.BreedDb
 import com.rma.catalist.db.entities.ImageDb
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -36,7 +37,7 @@ class BreedRepositoryNetworking @Inject constructor(
     fun observeAllBreedsRepository() = database.breedDao().observeAllBreedsDao() // vraca flow podatka iz baze
 
 
-    fun observeBreedDetails(breedId: String) = database.breedDao().observeBreedById(breedId)// isto kao sto asm gore uradio za sve rase, tako ovde samo za jednu specificnu
+    fun observeBreedDetails(breedId: String) = database.breedDao().observeBreedById(breedId)// isto kao sto sam gore uradio za sve rase, tako ovde samo za jednu specificnu
 
     suspend fun fetchAndStoreImagesForAllBreeds() = withContext(Dispatchers.IO) {
         val breedList = database.breedDao().getAll() // suspend funkcija iz DAO-a
@@ -48,7 +49,9 @@ class BreedRepositoryNetworking @Inject constructor(
                     val imageResponse = breedApi.getImageUrl(refId)
                     val imageDb = imageResponse.asImageDb()
                     database.imageDao().insert(imageDb)
-                    breed.imageUrl = imageResponse.imageUrl.toString()
+                    breed.imageUrl = imageDb.url
+                    database.breedDao().update(breed)
+                    delay(300)
                 } catch (e: Exception) {
                     Log.e("ImageLoad", "Failed for breed ${breed.id}", e)
                 }

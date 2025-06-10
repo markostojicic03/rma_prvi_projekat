@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.rma.catalist.db.entities.BreedDb
 import kotlinx.coroutines.flow.Flow
 
@@ -21,4 +22,8 @@ interface BreedDao {
 
     @Query("SELECT * FROM Breed WHERE id = :breedId")
     fun observeBreedById(breedId: String): Flow<BreedDb?>
+
+    @Update
+    suspend fun update(breedDb: BreedDb)
+
 }

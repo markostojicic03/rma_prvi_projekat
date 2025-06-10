@@ -181,6 +181,7 @@ class BreedListViewModel @Inject constructor (
         rare = this.rare,
         wikipedia_url = this.wikipedia_url,
         reference_image_id = this.reference_image_id,
+        imageUrl = this.imageUrl
 
         )
 
