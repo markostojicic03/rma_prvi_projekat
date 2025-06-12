@@ -19,6 +19,8 @@ import com.rma.catalist.breeds.details.BreedDetailsScreenContract
 import com.rma.catalist.breeds.details.BreedDetailsViewModel
 import com.rma.catalist.breeds.list.BreedListViewModel
 import com.rma.catalist.breeds.list.BreedListScreen
+import com.rma.catalist.user.register.RegisterScreen
+import com.rma.catalist.user.register.RegisterViewModel
 
 
 private fun NavController.navigateToDetails(breedId: String) {
@@ -31,8 +33,10 @@ fun CatalistNavigation(){
 
     NavHost(
         navController = navController,
-        startDestination = "start"
+        startDestination = "register"
     ){
+        registerScreen(route = "register", navController = navController)
+
         breedList(route = "start", navController = navController)
 
         breedDetails(
@@ -49,7 +53,19 @@ fun CatalistNavigation(){
 
     }
 }
+private fun NavGraphBuilder.registerScreen(
+    route: String,
+    navController: NavController
+) = composable(route = route) {
+    val viewModel = hiltViewModel<RegisterViewModel>()
 
+    RegisterScreen(
+        viewModel = viewModel,
+        onRegisterSuccess = {
+            navController.navigate("start")
+        }
+    )
+}
 
 private fun NavGraphBuilder.breedList(
     route: String,

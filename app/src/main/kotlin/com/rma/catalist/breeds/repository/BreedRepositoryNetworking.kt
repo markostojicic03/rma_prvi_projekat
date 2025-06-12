@@ -40,7 +40,7 @@ class BreedRepositoryNetworking @Inject constructor(
     fun observeBreedDetails(breedId: String) = database.breedDao().observeBreedById(breedId)// isto kao sto sam gore uradio za sve rase, tako ovde samo za jednu specificnu
 
     suspend fun fetchAndStoreImagesForAllBreeds() = withContext(Dispatchers.IO) {
-        val breedList = database.breedDao().getAll() // suspend funkcija iz DAO-a
+        val breedList = database.breedDao().getAll()
 
         breedList.forEach { breed ->
             val refId = breed.reference_image_id
@@ -51,10 +51,14 @@ class BreedRepositoryNetworking @Inject constructor(
                     database.imageDao().insert(imageDb)
                     breed.imageUrl = imageDb.url
                     database.breedDao().update(breed)
-                    delay(300)
+                    delay(400)
                 } catch (e: Exception) {
-                    Log.e("ImageLoad", "Failed for breed ${breed.id}", e)
+                    Log.e("BreedDebug", "Failed for breed ${breed.id}"+ e)
                 }
+            }
+            else{
+                breed.imageUrl ="https://i.pinimg.com/originals/a7/e8/89/a7e889effe08ecbede2ddaafbecdbd66.jpg"// default slika ako nema slike iz api-ja
+                database.breedDao().update(breed)
             }
         }
     }

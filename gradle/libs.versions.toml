@@ -21,6 +21,7 @@ dagger = "2.55"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
 room = "2.7.0"
+jetpack-datastore = "1.1.5"
 
 [libraries]
 
@@ -73,6 +74,10 @@ retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+
+# Data storage libs
+datastore = { module = "androidx.datastore:datastore", version.ref = "jetpack-datastore" }
+datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "jetpack-datastore" }
 
 # Tests
 junit = { group = "junit", name = "junit", version.ref = "junit" }
