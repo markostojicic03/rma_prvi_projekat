@@ -39,6 +39,31 @@ class BreedRepositoryNetworking @Inject constructor(
 
     fun observeBreedDetails(breedId: String) = database.breedDao().observeBreedById(breedId)// isto kao sto sam gore uradio za sve rase, tako ovde samo za jednu specificnu
 
+//    suspend fun fetchAndStoreImagesForAllBreeds() = withContext(Dispatchers.IO) {
+//        val breedList = database.breedDao().getAll()
+//
+//        breedList.forEach { breed ->
+//            val refId = breed.reference_image_id
+//            if (!refId.isNullOrBlank()) {
+//                try {
+//                    val imageResponse = breedApi.getImageUrl(refId)
+//                    val imageDb = imageResponse.asImageDb()
+//                    database.imageDao().insert(imageDb)
+//                    breed.imageUrl = imageDb.url
+//                    database.breedDao().update(breed)
+//                    delay(400)
+//                } catch (e: Exception) {
+//                    Log.e("BreedDebug", "Failed for breed ${breed.id}"+ e)
+//                }
+//            }
+//            else{
+//                breed.imageUrl ="https://i.pinimg.com/originals/a7/e8/89/a7e889effe08ecbede2ddaafbecdbd66.jpg"// default slika ako nema slike iz api-ja
+//                database.breedDao().update(breed)
+//            }
+//        }
+//    }
+
+
     suspend fun fetchAndStoreImagesForAllBreeds() = withContext(Dispatchers.IO) {
         val breedList = database.breedDao().getAll()
 
@@ -46,12 +71,15 @@ class BreedRepositoryNetworking @Inject constructor(
             val refId = breed.reference_image_id
             if (!refId.isNullOrBlank()) {
                 try {
-                    val imageResponse = breedApi.getImageUrl(refId)
-                    val imageDb = imageResponse.asImageDb()
-                    database.imageDao().insert(imageDb)
-                    breed.imageUrl = imageDb.url
-                    database.breedDao().update(breed)
-                    delay(400)
+                    val allImagesResponse = breedApi.getAllImagesForBreed(breed.id, 10)
+                    if (allImagesResponse.isNotEmpty()) {
+                        val imageDb = allImagesResponse[0].asImageDb()
+                        for (imageElement in allImagesResponse) database.imageDao()
+                            .insert(imageElement.asImageDb())
+                        breed.imageUrl = imageDb.url
+                        database.breedDao().update(breed)
+                        delay(400)
+                    }
                 } catch (e: Exception) {
                     Log.e("BreedDebug", "Failed for breed ${breed.id}"+ e)
                 }

@@ -10,13 +10,17 @@ import com.rma.catalist.breeds.map.asBreed
 import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import com.rma.catalist.navigation.breedIdOrThrow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,6 +31,9 @@ class BreedDetailsViewModel @Inject constructor(
     private val breedRepository: BreedRepositoryNetworking,
 ): ViewModel() {
 
+    private val _sideEffect : Channel<BreedDetailsScreenContract.SideEffect> = Channel()
+    val sideEffect = _sideEffect.receiveAsFlow()
+    private fun setEffect(effect: BreedDetailsScreenContract.SideEffect) = viewModelScope.launch { _sideEffect.send(effect) }
 
     private val breedId = savedStateHandle.breedIdOrThrow
 
@@ -61,14 +68,22 @@ class BreedDetailsViewModel @Inject constructor(
     }
 
     private fun observeEvents(){
-      /*  viewModelScope.launch {
+        viewModelScope.launch {
             events.collect { event ->
                 when(event){
-                    is BreedDetailsScreenContract.UiEvent.OpenedScreen -> loadBreedDetails()
+                    is BreedDetailsScreenContract.UiEvent.OpenedScreen ->{
+
+                    }
+                    is BreedDetailsScreenContract.UiEvent.OnGalleryClicked -> {
+                        setEffect(BreedDetailsScreenContract.SideEffect.NavigateToBreedGallery(state.value.data?.id!!))
+                    }
+                    is BreedDetailsScreenContract.UiEvent.OnWikipediaClicked -> {
+                        setEffect(BreedDetailsScreenContract.SideEffect.NavigateToWikipediaUrl(state.value.data?.wikipedia_url!!))
+                    }
                 }
 
             }
-        }*/
+        }
     }
 
 /*

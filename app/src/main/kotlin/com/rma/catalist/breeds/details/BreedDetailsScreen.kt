@@ -59,6 +59,7 @@ import com.rma.catalist.core.compose.CatalistAppTopBar
 import com.rma.catalist.core.compose.LoadingIndicator
 import com.rma.catalist.core.compose.NoDataContent
 import androidx.core.net.toUri
+import com.rma.catalist.breeds.list.BreedListScreenContract
 
 
 @Composable
@@ -68,11 +69,26 @@ fun BreedDetailsScreen(
     onClose: ()-> Unit
 ){
     val uiState = viewModel.state.collectAsState()
+    val context = LocalContext.current
+    LaunchedEffect(viewModel, onClose) {
+        viewModel.sideEffect.collect {
+            when (it) {
+                is BreedDetailsScreenContract.SideEffect.NavigateToBreedGallery ->{
+
+                }
+                is BreedDetailsScreenContract.SideEffect.NavigateToWikipediaUrl -> {
+                    val intent = Intent(Intent.ACTION_VIEW, it.url.toUri())
+                    context.startActivity(intent)
+                }
+            }
+        }
+    }
 
     BreedDetailsScreen(
         state = uiState.value,
         breedId = breedId,
-        onClose = onClose
+        onClose = onClose,
+        eventPublisher = {viewModel.setEvent(it)}
     )
 }
 
@@ -83,7 +99,8 @@ fun BreedDetailsScreen(
 fun BreedDetailsScreen(
     state : BreedDetailsScreenContract.UiState,
     breedId : String,
-    onClose: ()-> Unit
+    onClose: ()-> Unit,
+    eventPublisher: (BreedDetailsScreenContract.UiEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -185,7 +202,7 @@ fun BreedDetailsScreen(
 
                     }
 
-                    if(data?.wikipedia_url != null) FilledButtonWiki(data.wikipedia_url)
+                    if(data?.wikipedia_url != null) FilledButtonWiki(data.wikipedia_url, eventPublisher)
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Description:") }
@@ -349,14 +366,21 @@ fun TraitDotsIndicator(
 }
 
 @Composable
-fun FilledButtonWiki(wikiUrl: String) {
-    val context = LocalContext.current
-    androidx.compose.material3.Button(onClick = {
-        val intent = Intent(Intent.ACTION_VIEW, wikiUrl.toUri())
-        context.startActivity(intent)
-
-    }) {
+fun FilledButtonWiki(
+    wikiUrl: String,
+    eventPublisher: (BreedDetailsScreenContract.UiEvent) -> Unit,
+    ) {
+    androidx.compose.material3.Button(
+        onClick = {eventPublisher(BreedDetailsScreenContract.UiEvent.OnWikipediaClicked)}
+    ) {
         Text("Wikipedia")
+    }
+}
+
+@Composable
+fun FilledButtonGallery(onClick: () -> Unit) {
+    androidx.compose.material3.Button(onClick = onClick) {
+        Text("Open Gallery")
     }
 }
 

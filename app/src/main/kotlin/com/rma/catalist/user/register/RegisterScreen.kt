@@ -160,7 +160,7 @@ fun WelcomeBackScreen(name: String) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Welcome back, $name!",
+                    text = "Welcome, $name!",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )

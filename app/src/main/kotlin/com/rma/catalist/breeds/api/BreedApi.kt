@@ -29,6 +29,10 @@ interface BreedApi {
         @Query("q") query: String?
     ): List<BreedApiModel>
 
-
+    @GET("images/search")
+    suspend fun getAllImagesForBreed(
+        @Query("breed_id") breedId: String,
+        @Query("limit") limit: Int = 10
+    ): List<CatImageApiModel>
 
 }
