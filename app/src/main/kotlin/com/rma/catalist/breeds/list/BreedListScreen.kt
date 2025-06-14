@@ -115,7 +115,7 @@ private fun BreedListScreen(
             )*/
         } else if (state.data.isEmpty()) {
             NoDataContent(
-                text =  "Error, there is no data."
+                text =  "There is no data yet (loading data...)"
             )
         } else {
             Column(
