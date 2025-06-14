@@ -3,7 +3,6 @@ package com.rma.catalist.breeds.details
 import android.content.Intent
 import android.graphics.Color
 import android.util.Log
-import android.widget.Button
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,23 +13,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.handwriting.handwritingDetector
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Cancel
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
@@ -43,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.EmojiSupportMatch
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -51,19 +44,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.toColorInt
-import coil3.Uri
 import coil3.compose.SubcomposeAsyncImage
-import com.rma.catalist.breeds.list.SuggestionChipForTraits
 import com.rma.catalist.core.compose.CatalistAppTopBar
 import com.rma.catalist.core.compose.LoadingIndicator
 import com.rma.catalist.core.compose.NoDataContent
 import androidx.core.net.toUri
-import com.rma.catalist.breeds.list.BreedListScreenContract
+import androidx.navigation.NavController
 
 
 @Composable
 fun BreedDetailsScreen(
+    navController: NavController,
     viewModel: BreedDetailsViewModel,
     breedId : String,
     onClose: ()-> Unit
@@ -74,7 +65,7 @@ fun BreedDetailsScreen(
         viewModel.sideEffect.collect {
             when (it) {
                 is BreedDetailsScreenContract.SideEffect.NavigateToBreedGallery ->{
-
+                    navController.navigate("gallery/$breedId")
                 }
                 is BreedDetailsScreenContract.SideEffect.NavigateToWikipediaUrl -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.url.toUri())
@@ -201,8 +192,16 @@ fun BreedDetailsScreen(
                         )
 
                     }
+                    Row(
+                        modifier = Modifier.padding(7.dp)
+                    ) {
+                        if(data?.wikipedia_url != null){
+                            WikiButton(data.wikipedia_url, eventPublisher)
+                            Spacer(modifier = Modifier.width(10.dp))
+                        }
+                        GalleryButton(eventPublisher)
+                    }
 
-                    if(data?.wikipedia_url != null) FilledButtonWiki(data.wikipedia_url, eventPublisher)
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append("Description:") }
@@ -366,7 +365,7 @@ fun TraitDotsIndicator(
 }
 
 @Composable
-fun FilledButtonWiki(
+fun WikiButton(
     wikiUrl: String,
     eventPublisher: (BreedDetailsScreenContract.UiEvent) -> Unit,
     ) {
@@ -378,8 +377,10 @@ fun FilledButtonWiki(
 }
 
 @Composable
-fun FilledButtonGallery(onClick: () -> Unit) {
-    androidx.compose.material3.Button(onClick = onClick) {
+fun GalleryButton(
+    eventPublisher: (BreedDetailsScreenContract.UiEvent) -> Unit,
+) {
+    androidx.compose.material3.Button(onClick = {eventPublisher(BreedDetailsScreenContract.UiEvent.OnGalleryClicked)}) {
         Text("Open Gallery")
     }
 }

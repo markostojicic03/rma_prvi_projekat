@@ -17,6 +17,8 @@ import com.rma.catalist.breeds.details.BreedDetailsScreen
 //import com.rma.catalist.breeds.details.BreedDetailsScreen
 import com.rma.catalist.breeds.details.BreedDetailsScreenContract
 import com.rma.catalist.breeds.details.BreedDetailsViewModel
+import com.rma.catalist.breeds.gallery.BreedGalleryScreen
+import com.rma.catalist.breeds.gallery.BreedGalleryViewModel
 import com.rma.catalist.breeds.list.BreedListViewModel
 import com.rma.catalist.breeds.list.BreedListScreen
 import com.rma.catalist.user.register.RegisterScreen
@@ -42,6 +44,17 @@ fun CatalistNavigation(){
         breedDetails(
 
             route = "details/{$BREED_ID_ARG}",
+            arguments = listOf(
+                navArgument(name = BREED_ID_ARG){
+                    type = NavType.StringType
+                    nullable = false
+                }
+            ),
+            navController = navController
+        )
+
+        breedGallery(
+            route = "gallery/{$BREED_ID_ARG}",
             arguments = listOf(
                 navArgument(name = BREED_ID_ARG){
                     type = NavType.StringType
@@ -98,11 +111,32 @@ private fun NavGraphBuilder.breedDetails(
 
     //eventPublisherFromViewModel(BreedDetailsScreenContract.UiEvent.OpenedScreen(breedId))
     BreedDetailsScreen(
+        navController = navController,
         viewModel = viewModel,
         breedId = breedId,
         onClose =  {
             navController.navigateUp()
         },
+    )
+}
+
+private fun NavGraphBuilder.breedGallery(
+    route: String,
+    arguments: List<NamedNavArgument>,
+    navController: NavController,
+) = composable(route = route, arguments) { navBackStackEntry: NavBackStackEntry ->
+
+    val breedId = navBackStackEntry.arguments?.getString(BREED_ID_ARG)
+        ?: error("Breed ID is missing!")
+
+    // Hilt sada zna da postoji argument u SavedStateHandle-u
+    val viewModel = hiltViewModel<BreedGalleryViewModel>()
+
+    BreedGalleryScreen(
+        viewModel = viewModel,
+        onImageClick = {
+            // ovde možeš otvoriti full screen ako budeš dodavao
+        }
     )
 }
 

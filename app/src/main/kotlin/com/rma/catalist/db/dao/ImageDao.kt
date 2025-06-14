@@ -15,11 +15,11 @@ interface ImageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(list: List<ImageDb>)
 
-    @Query("SELECT * FROM Image WHERE breedId = :breedId")
-    suspend fun getAllForBreed(breedId: String): List<ImageDb>
+//    @Query("SELECT * FROM Image WHERE breedId = :breedId")
+//    suspend fun getAllForBreed(breedId: String): List<ImageDb>
 
     @Query("SELECT * FROM Image WHERE breedId = :breedId")
-    fun observeAllForBreed(breedId: String): Flow<List<ImageDb>>
+    fun getAllForBreed(breedId: String): Flow<List<ImageDb>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(imageDbModel: ImageDb)

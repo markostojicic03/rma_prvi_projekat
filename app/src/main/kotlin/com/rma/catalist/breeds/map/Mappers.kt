@@ -66,5 +66,17 @@ fun CatImageApiModel.asImageDb(): ImageDb {
     )
 }
 
+fun ImageDb.asImage(): CatImageApiModel{
+    return CatImageApiModel(
+        id = id,
+        imageUrl = url,
+        breeds = emptyList(),
+        width = width,
+        height = height,
+    )
+
+
+}
+
 
 
