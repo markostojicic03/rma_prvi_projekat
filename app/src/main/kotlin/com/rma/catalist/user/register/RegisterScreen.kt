@@ -66,6 +66,10 @@ fun RegisterForm(
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
 
+    var usernameError by remember { mutableStateOf<String?>(null) }
+    var emailError by remember { mutableStateOf<String?>(null) }
+
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -110,25 +114,56 @@ fun RegisterForm(
 
                 TextField(
                     value = username,
-                    onValueChange = { username = it },
+                    onValueChange = {
+                        username = it
+                        usernameError = null
+                                    },
                     label = { Text("Username") },
+                    isError = usernameError != null,
                     modifier = Modifier.fillMaxWidth()
                 )
+                usernameError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 TextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { email = it
+                        emailError = null},
                     label = { Text("Email") },
+                    isError = emailError != null,
                     modifier = Modifier.fillMaxWidth()
                 )
-
+                emailError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = {
-                        onRegister(firstName, lastName, username, email)
+                        val isUsernameOk = isUsernameValid(username)
+                        val isEmailOk = isEmailValid(email)
+
+                        if (!isUsernameOk) {
+                            usernameError = "Username is not valid."
+                        }
+                        if (!isEmailOk) {
+                            emailError = "Email is not valid."
+                        }
+
+                        if (isUsernameOk && isEmailOk) {
+                            onRegister(firstName, lastName, username, email)
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()

@@ -13,12 +13,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import coil3.Uri
 import com.rma.catalist.breeds.details.BreedDetailsScreen
 //import com.rma.catalist.breeds.details.BreedDetailsScreen
 import com.rma.catalist.breeds.details.BreedDetailsScreenContract
 import com.rma.catalist.breeds.details.BreedDetailsViewModel
 import com.rma.catalist.breeds.gallery.BreedGalleryScreen
 import com.rma.catalist.breeds.gallery.BreedGalleryViewModel
+import com.rma.catalist.breeds.gallery.ImageFullscreenScreen
 import com.rma.catalist.breeds.list.BreedListViewModel
 import com.rma.catalist.breeds.list.BreedListScreen
 import com.rma.catalist.user.register.RegisterScreen
@@ -59,6 +61,16 @@ fun CatalistNavigation(){
                 navArgument(name = BREED_ID_ARG){
                     type = NavType.StringType
                     nullable = false
+                }
+            ),
+            navController = navController
+        )
+
+        imageFullscreen(
+            route = "fullscreen/{$IMAGE_URL_ARG}",
+            arguments = listOf(
+                navArgument(name = IMAGE_URL_ARG) {
+                    type = NavType.StringType
                 }
             ),
             navController = navController
@@ -129,14 +141,30 @@ private fun NavGraphBuilder.breedGallery(
     val breedId = navBackStackEntry.arguments?.getString(BREED_ID_ARG)
         ?: error("Breed ID is missing!")
 
-    // Hilt sada zna da postoji argument u SavedStateHandle-u
+
     val viewModel = hiltViewModel<BreedGalleryViewModel>()
 
     BreedGalleryScreen(
         viewModel = viewModel,
         onImageClick = {
-            // ovde možeš otvoriti full screen ako budeš dodavao
+            imageUrl ->
+            val encodedUrl = android.net.Uri.encode(imageUrl)
+            navController.navigate("fullscreen/$encodedUrl")
         }
+    )
+}
+
+private fun NavGraphBuilder.imageFullscreen(
+    route: String,
+    arguments: List<NamedNavArgument>,
+    navController: NavController
+) = composable(route = route, arguments = arguments) { backStackEntry ->
+    val imageUrl = backStackEntry.arguments?.getString(IMAGE_URL_ARG)
+        ?: error("Image URL is missing!")
+
+    ImageFullscreenScreen(
+        imageUrl = imageUrl,
+        onBack = { navController.navigateUp() }
     )
 }
 

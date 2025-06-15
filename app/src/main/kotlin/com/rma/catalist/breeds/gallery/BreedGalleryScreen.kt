@@ -63,7 +63,9 @@ fun BreedGalleryScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .aspectRatio(1f)
-                        .clickable { onImageClick?.invoke(image.imageUrl.toString()) }
+                        .clickable { onImageClick?.invoke(
+                            image.imageUrl.toString()
+                        ) }
                 ) {
                     SubcomposeAsyncImage(
                         model = image.imageUrl,

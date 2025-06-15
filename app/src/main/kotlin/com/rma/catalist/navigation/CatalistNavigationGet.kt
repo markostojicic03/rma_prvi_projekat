@@ -12,3 +12,6 @@ val SavedStateHandle.bredId: String?
 
 val SavedStateHandle.breedIdOrThrow: String
     get() = this.get<String>(BREED_ID_ARG) ?: error("$BREED_ID_ARG not found.")
+
+
+const val IMAGE_URL_ARG = "imageUrl"
