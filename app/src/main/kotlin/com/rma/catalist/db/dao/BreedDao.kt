@@ -26,4 +26,7 @@ interface BreedDao {
     @Update
     suspend fun update(breedDb: BreedDb)
 
+    @Query("SELECT COUNT(*) FROM Breed")
+    suspend fun getBreedsCount(): Int
+
 }

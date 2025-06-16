@@ -52,8 +52,12 @@ class BreedListViewModel @Inject constructor (
 
             setState { copy(loading = true) }
             try {
-                breedRepository.fetchAllBreedsAndStore()
-                breedRepository.fetchAndStoreImagesForAllBreeds() // <-- dodato
+                val isCached = breedRepository.isBreedDataCached()
+                if (!isCached) {
+                    Log.d("BreedDebug", "Podaci nisu keširani – fetchujem iz mreže")
+                    breedRepository.fetchAllBreedsAndStore()
+                    breedRepository.fetchAndStoreImagesForAllBreeds()
+                }
             } catch (error: Exception) {
                 Log.e("BreedDebug", "Nesto je trulo u drzavi danskoj(fetchallUsers iz BreedListViewModel)", error)
             } finally {

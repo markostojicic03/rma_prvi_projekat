@@ -204,7 +204,7 @@ fun NavGraphBuilder.quizMainScreen(
 ) = composable(route = route) {
 
     val viewModel = hiltViewModel<QuizViewModel>()
-    QuizScreen(viewModel)
+    QuizScreen(viewModel, navController)
 
 }
 

@@ -11,12 +11,14 @@ import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import com.rma.catalist.db.AppDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -35,11 +37,14 @@ class QuizViewModel @Inject constructor(
     private val events = MutableSharedFlow<QuizContract.UiEvent>()
     fun setEvent(event: QuizContract.UiEvent) = viewModelScope.launch { events.emit(event) }
 
-
+    private val _sideEffect : Channel<QuizContract.SideEffect> = Channel()
+    val sideEffect = _sideEffect.receiveAsFlow()
+    private fun setEffect(effect: QuizContract.SideEffect) = viewModelScope.launch { _sideEffect.send(effect) }
 
     init{
         fetchAndPrepareQuiz()
         observeEvents()
+        startTimer()
     }
 
     private fun observeEvents(){
@@ -49,19 +54,51 @@ class QuizViewModel @Inject constructor(
                     is QuizContract.UiEvent.AnswerSelected -> {
                         val currentQuestion = _state.value.questions[_state.value.tempQuestionInd]
                         val isCorrect = event.selectedAnswer == currentQuestion.solution
+                        val newCorrect = if (isCorrect) _state.value.correctAnswers + 1 else _state.value.correctAnswers
+                        val newIndex = _state.value.tempQuestionInd + 1
+                        val finished = newIndex >= 2
+                        val newScore = calculateScore(newCorrect, _state.value.remainingTime)
 
                         setState {
                             copy(
                                 correctAnswers = if (isCorrect) correctAnswers + 1 else correctAnswers,
-                                tempQuestionInd = tempQuestionInd + 1
+                                tempQuestionInd = tempQuestionInd + 1,
+                                isQuizFinished = if(tempQuestionInd+1 >= 20){true}else{false},
+                                scoreInQuiz = newScore
+
+
                             )
                         }
                     }
-                    is QuizContract.UiEvent.CancelQuiz -> {}
+                    is QuizContract.UiEvent.CancelQuiz -> {
+                        setEffect(QuizContract.SideEffect.NavigateCancelQuiz)
+
+                    }
                     is QuizContract.UiEvent.NextQuestion -> {}
                     is QuizContract.UiEvent.SubmitResult -> {}
-                    is QuizContract.UiEvent.TimeUp -> {}
+                    is QuizContract.UiEvent.TimeUp -> {
+
+                        setState {
+                            copy(
+                                isQuizFinished = true
+
+                            )
+                        }
+                    }
                 }
+            }
+        }
+    }
+
+    private fun startTimer() {
+        viewModelScope.launch {
+            while (_state.value.remainingTime > 0 && !_state.value.isQuizFinished) {
+                kotlinx.coroutines.delay(1000L)
+                setState { copy(remainingTime = remainingTime - 1) }
+            }
+
+            if (_state.value.remainingTime == 0) {
+                setEvent(QuizContract.UiEvent.TimeUp)
             }
         }
     }
@@ -139,6 +176,14 @@ class QuizViewModel @Inject constructor(
                 .firstOrNull()
                 ?.imageUrl
         }
+    }
+
+    private fun calculateScore(correctAnswers: Int, remainingTime: Int): Double {
+        val MVT = 300.0
+        val BTO = correctAnswers.toDouble()
+        val PVT = remainingTime.toDouble()
+
+        return BTO * 2.5 * (1 + (PVT + 120) / MVT)
     }
 
 

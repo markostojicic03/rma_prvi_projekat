@@ -1,6 +1,7 @@
 package com.rma.catalist.breeds.quiz
 
 import com.rma.catalist.breeds.domain.Breed
+import com.rma.catalist.breeds.list.BreedListScreenContract.BreedsSideEffect
 
 interface QuizContract {
 
@@ -36,7 +37,18 @@ interface QuizContract {
     }
 
     sealed class SideEffect {
-
+        object NavigateCancelQuiz : SideEffect()
     }
 
 }
+
+
+/**
+ * Formula: UBP = BTO * 2.5 * (1 + (PVT + 120) / MVT)
+ * Legenda:
+ * BTO - Broj tačnih odgovora;
+ * MVT - Maksimalno Vreme Trajanja kviza (300 sekundi);
+ * PVT - Preostalo Vreme Trajanja kviza;
+ * UBP - Ukupan Broj Poena (šalje se na Leaderbord API).
+ *
+ * */

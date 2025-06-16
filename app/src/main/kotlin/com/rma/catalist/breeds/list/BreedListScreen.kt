@@ -81,8 +81,8 @@ fun BreedListScreen(
                     navController.navigate("quiz/start")
                 }
 
-                is BreedListScreenContract.BreedsSideEffect.NavigateToEditProfile -> TODO()
-                is BreedListScreenContract.BreedsSideEffect.NavigateToLeaderboard -> TODO()
+                is BreedListScreenContract.BreedsSideEffect.NavigateToEditProfile -> {}
+                is BreedListScreenContract.BreedsSideEffect.NavigateToLeaderboard -> {}
             }
         }
     }

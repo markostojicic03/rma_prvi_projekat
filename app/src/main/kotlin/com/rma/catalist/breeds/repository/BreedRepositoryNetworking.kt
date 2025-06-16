@@ -81,6 +81,9 @@ class BreedRepositoryNetworking @Inject constructor(
 
         return dataAllBreeds.filter { it.name.contains(query, ignoreCase = true) }
     }
+    suspend fun isBreedDataCached(): Boolean {
+        return database.breedDao().getBreedsCount() > 0
+    }
 
 
 }
