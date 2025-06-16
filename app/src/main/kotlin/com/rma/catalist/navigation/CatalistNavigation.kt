@@ -3,6 +3,8 @@ package com.rma.catalist.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -23,6 +25,9 @@ import com.rma.catalist.breeds.gallery.BreedGalleryViewModel
 import com.rma.catalist.breeds.gallery.ImageFullscreenScreen
 import com.rma.catalist.breeds.list.BreedListViewModel
 import com.rma.catalist.breeds.list.BreedListScreen
+import com.rma.catalist.breeds.quiz.QuizScreen
+import com.rma.catalist.breeds.quiz.QuizStartScreen
+import com.rma.catalist.breeds.quiz.QuizViewModel
 import com.rma.catalist.user.register.RegisterScreen
 import com.rma.catalist.user.register.RegisterViewModel
 
@@ -76,6 +81,16 @@ fun CatalistNavigation(){
             navController = navController
         )
 
+        startQuizNavigate(
+            route = "quiz/start",
+            navController = navController,
+        )
+
+        quizMainScreen(
+            route = "quiz",
+            navController = navController,
+        )
+
     }
 }
 private fun NavGraphBuilder.registerScreen(
@@ -98,6 +113,7 @@ private fun NavGraphBuilder.breedList(
 ) = composable(route = route) {
     val viewModel = hiltViewModel<BreedListViewModel>()
     BreedListScreen(
+        navController = navController,
         viewModel = viewModel,
         clickOnBreed = { breedId ->
             navController.navigateToDetails(breedId = breedId)
@@ -166,6 +182,30 @@ private fun NavGraphBuilder.imageFullscreen(
         imageUrl = imageUrl,
         onBack = { navController.navigateUp() }
     )
+}
+
+
+private fun NavGraphBuilder.startQuizNavigate(
+    route: String,
+    navController: NavController
+) = composable(route = route) { backStackEntry ->
+
+    QuizStartScreen(
+        onStartQuizClick = { navController.navigate("quiz") },
+        navController = navController
+    )
+
+}
+
+
+fun NavGraphBuilder.quizMainScreen(
+    route: String,
+    navController: NavController,
+) = composable(route = route) {
+
+    val viewModel = hiltViewModel<QuizViewModel>()
+    QuizScreen(viewModel)
+
 }
 
 

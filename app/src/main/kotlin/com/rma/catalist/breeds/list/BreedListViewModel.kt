@@ -4,16 +4,19 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rma.catalist.breeds.api.model.BreedApiModel
+import com.rma.catalist.breeds.details.BreedDetailsScreenContract
 import com.rma.catalist.breeds.domain.Breed
 import com.rma.catalist.breeds.map.asBreed
 import com.rma.catalist.breeds.repository.BreedRepositoryNetworking
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,6 +33,11 @@ class BreedListViewModel @Inject constructor (
     private fun setState(reducer: BreedListScreenContract.BreedListUiState.() -> BreedListScreenContract.BreedListUiState) = _state.getAndUpdate(reducer)
     private val events = MutableSharedFlow<BreedListScreenContract.BreedListUiEvent>()
     fun setEvent(event: BreedListScreenContract.BreedListUiEvent) = viewModelScope.launch { events.emit(event) }
+
+    private val _sideEffect : Channel<BreedListScreenContract.BreedsSideEffect> = Channel()
+    val sideEffect = _sideEffect.receiveAsFlow()
+    private fun setEffect(effect: BreedListScreenContract.BreedsSideEffect) = viewModelScope.launch { _sideEffect.send(effect) }
+
 
     init {
         observeEvents()
@@ -69,55 +77,6 @@ class BreedListViewModel @Inject constructor (
         }
     }
 
-/*
-    private fun loadBreeds() {
-        viewModelScope.launch {
-            setState { copy(loading = true) }
-            try {
-
-                val breedsFromApi = breedRepository.fetchAllBreeds()
-                val breedList = breedsFromApi.map { it.asBreedUiModel(null) }
-                allBreeds = breedList as MutableList<Breed>
-
-                setState { copy(data = breedList, loading = false) }
-
-                //Lazy
-                breedList.forEachIndexed { index, breed ->
-
-                        val imageUrl = try {
-                            breedRepository.fetchCatImage(breed.reference_image_id)
-                        } catch (e: Exception) {
-                            Log.e("ImageLoad", "Error loading image for ${breed.name}", e)
-                            null
-                        }
-
-                        imageUrl?.let {
-                            val updatedBreed = breed.copy(imageUrl = it)
-
-                            setState {
-                                val newList = data.toMutableList()
-                                newList[index] = updatedBreed
-                                copy(data = newList)
-                            }
-
-                            // Ažuriraj i allBreeds za search
-                            allBreeds = allBreeds.toMutableList().also {
-                                it[index] = updatedBreed
-                            }
-                        }
-
-                }
-            } catch (error: Exception) {
-                Log.d("test", "Failed to fetch.", error)
-            } finally {
-                //setState { copy(loading = false) }
-            }
-        }
-
-
-
-    }
-*/
     private fun observeEvents(){
         viewModelScope.launch {
             events.collect { event ->
@@ -154,6 +113,15 @@ class BreedListViewModel @Inject constructor (
                         }
                     }
 
+                    BreedListScreenContract.BreedListUiEvent.OnStartQuizClicked -> {
+                        setEffect(BreedListScreenContract.BreedsSideEffect.NavigateToQuiz)
+                    }
+                    BreedListScreenContract.BreedListUiEvent.OnEditProfileClicked -> {
+                        setEffect(BreedListScreenContract.BreedsSideEffect.NavigateToEditProfile)
+                    }
+                    BreedListScreenContract.BreedListUiEvent.OnLeaderboardClicked -> {
+                        setEffect(BreedListScreenContract.BreedsSideEffect.NavigateToLeaderboard)
+                    }
                 }
 
             }

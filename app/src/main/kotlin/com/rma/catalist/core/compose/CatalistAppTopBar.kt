@@ -1,7 +1,11 @@
 package com.rma.catalist.core.compose
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,24 +27,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
+import coil3.Image
 
 
-@ExperimentalMaterial3Api
-    @Composable
-    fun CatalistAppTopBar(
-        modifier: Modifier = Modifier,
-        text: String,
-        navigationIcon: ImageVector? = null,
-        navigationOnClick: (() -> Unit)? = null,
-        actionIcon: ImageVector? = null,
-        actionOnClick: (() -> Unit)? = null,
-        isSearching: Boolean = false,
-        searchQuery: String = "",
-        onSearchQueryChange: ((String) -> Unit)? = null,
-    ){
-    CenterAlignedTopAppBar(
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CatalistAppTopBar(
+    modifier: Modifier = Modifier,
+    text: String,
+    navigationIcon: ImageVector? = null,
+    navigationOnClick: (() -> Unit)? = null,
+    actionIcon: ImageVector? = null,
+    actionOnClick: (() -> Unit)? = null,
+    isSearching: Boolean = false,
+    searchQuery: String = "",
+    onSearchQueryChange: ((String) -> Unit)? = null,
+) {
+    TopAppBar(
         modifier = modifier,
         title = {
             if (isSearching) {
@@ -51,39 +61,76 @@ import androidx.compose.ui.graphics.vector.ImageVector
                         .fillMaxWidth()
                         .padding(end = 8.dp),
                     singleLine = true,
-                    placeholder = { Text("Search breed...") } ,
+                    placeholder = { Text("Search breed...") },
                     trailingIcon = {
                         IconButton(onClick = {
                             onSearchQueryChange?.invoke("")
                             actionOnClick?.invoke()
-
                         }) {
                             Icon(Icons.Default.Close, contentDescription = "Clear")
                         }
                     }
                 )
             } else {
-                Text(text)
+                Text(
+                    text = text,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
         },
         navigationIcon = {
-            IconButton(onClick = { navigationOnClick?.invoke() }) {
-                Icon(
-                    imageVector = navigationIcon!!,
-                    contentDescription = "Menu",
-                    modifier = Modifier.size(80.dp),
-                    tint = Color.Unspecified // onemogućava automatsko skaliranje unutar 24dp
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { navigationOnClick?.invoke() }) {
+                    Icon(Icons.Default.Menu, contentDescription = "Menu")
+                }
+                if (navigationIcon != null) {
+                    Image(
+                        imageVector = navigationIcon,
+                        contentDescription = "Logo",
+                        modifier = Modifier
+                            .size(40.dp) // prilagodi po potrebi
+                            .padding(start = 4.dp)
+                    )
+                }
             }
         },
         actions = {
             if (actionIcon != null && !isSearching) {
-                AppTopBarIcon(
-                    icon = actionIcon,
-                    onClick = { actionOnClick?.invoke() }
-                )
+                IconButton(onClick = { actionOnClick?.invoke() }) {
+                    Icon(imageVector = actionIcon, contentDescription = "Action")
+                }
             }
-        }
+        },
     )
 }
 
+
+@Composable
+fun DrawerContent(
+    onItemClick: (String) -> Unit
+) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Options",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
+        NavigationDrawerItem(
+            label = { Text("✏️ Edit Profile") },
+            selected = false,
+            onClick = { onItemClick("edit_profile") }
+        )
+        NavigationDrawerItem(
+            label = { Text("❓ Start Quiz") },
+            selected = false,
+            onClick = { onItemClick("start_quiz") }
+        )
+        NavigationDrawerItem(
+            label = { Text("🏆 Leaderboard") },
+            selected = false,
+            onClick = { onItemClick("leaderboard") }
+        )
+    }
+}

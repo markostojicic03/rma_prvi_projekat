@@ -27,14 +27,20 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +54,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil3.compose.SubcomposeAsyncImage
 import com.rma.catalist.breeds.domain.Breed
 import com.rma.catalist.core.compose.CatalistAppTopBar
@@ -55,17 +62,34 @@ import com.rma.catalist.core.compose.LoadingIndicator
 import com.rma.catalist.core.compose.NoDataContent
 import com.rma.catalist.theme.PurpleGrey80
 import com.rma.catalist.R
+import com.rma.catalist.core.compose.DrawerContent
 import com.rma.catalist.theme.OrangeLogoColor
+import kotlinx.coroutines.launch
 
 @Composable
 fun BreedListScreen(
+    navController: NavController,
     viewModel: BreedListViewModel,
     clickOnBreed: ((String) -> Unit)?
 ){
 
     val uiState = viewModel.state.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                is BreedListScreenContract.BreedsSideEffect.NavigateToQuiz -> {
+                    navController.navigate("quiz/start")
+                }
+
+                is BreedListScreenContract.BreedsSideEffect.NavigateToEditProfile -> TODO()
+                is BreedListScreenContract.BreedsSideEffect.NavigateToLeaderboard -> TODO()
+            }
+        }
+    }
+
 
     BreedListScreen(
+        viewModel = viewModel,
         state = uiState.value,
         eventPublisher = {viewModel.setEvent(it)},
         onBreedClick = clickOnBreed,
@@ -77,70 +101,99 @@ fun BreedListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BreedListScreen(
+    viewModel: BreedListViewModel,
     state: BreedListScreenContract.BreedListUiState,
     eventPublisher: (BreedListScreenContract.BreedListUiEvent) -> Unit,
     onBreedClick: ((String) -> Unit)?
 ) {
-    Scaffold(
-        topBar = {
-            CatalistAppTopBar(
-                text = "Breed List",
-                navigationIcon = ImageVector.vectorResource(id = R.drawable.svgpersan),
-                navigationOnClick = {
-                    Log.d("BreedDebug", "alo")
-                },
-                actionIcon = Icons.Default.Search,
-                actionOnClick =  {
-                    if (state.isSearching) {
-                        eventPublisher(BreedListScreenContract.BreedListUiEvent.OnSearchClosed)
-                    } else {
-                        eventPublisher(BreedListScreenContract.BreedListUiEvent.OnToggleSearchClick)
-                    }
-                },
-                isSearching = state.isSearching,
-                searchQuery = state.search,
-                onSearchQueryChange = {
-                    eventPublisher(BreedListScreenContract.BreedListUiEvent.SearchFilter(it))
-                }
-            )
-        }
-    ) { padding ->
 
-        // ... ostatak UI kao i do sada
-        if (state.loading) {
-            LoadingIndicator()
-        } else if (state.error != null) {
-           /* NoDataContent(
-                text = "Error = ${state.error.message}",
-            )*/
-        } else if (state.data.isEmpty()) {
-            NoDataContent(
-                text =  "There is no data yet (loading data...)"
-            )
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize() // >>>>>> ovo rešava problem beskonačne visine
-                    .verticalScroll(rememberScrollState())
-                    .padding(padding)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
+    ModalNavigationDrawer (
+        drawerContent = {
+            ModalDrawerSheet(
+                drawerContainerColor = MaterialTheme.colorScheme.surface,
             ) {
-                val listToDisplay = if (state.isSearching && state.search.isNotBlank()) {
-                    state.searchData
-                } else {
-                    state.data
-                }
+                DrawerContent(
+                    onItemClick = { action ->
+                        when (action) {
+                            "start_quiz" -> viewModel.setEvent(BreedListScreenContract.BreedListUiEvent.OnStartQuizClicked)
+                            "edit_profile" -> viewModel.setEvent(BreedListScreenContract.BreedListUiEvent.OnEditProfileClicked)
+                            "leaderboard" -> viewModel.setEvent(BreedListScreenContract.BreedListUiEvent.OnLeaderboardClicked)
+                        }
+                        scope.launch { drawerState.close() }
+                    }
+                )
 
-                listToDisplay.forEach { breed ->
-                    BreedListItem(
-                        data = breed,
-                        onClick = { onBreedClick?.invoke(breed.id) }
-                    )
-                }
+            }
+        },
+        drawerState = drawerState
+    ){
+        Scaffold(
+            topBar = {
+                CatalistAppTopBar(
+                    text = "Breed List",
+                    navigationIcon = ImageVector.vectorResource(id = R.drawable.svgpersan),
+                    navigationOnClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    },
+                    actionIcon = Icons.Default.Search,
+                    actionOnClick = {
+                        if (state.isSearching) {
+                            eventPublisher(BreedListScreenContract.BreedListUiEvent.OnSearchClosed)
+                        } else {
+                            eventPublisher(BreedListScreenContract.BreedListUiEvent.OnToggleSearchClick)
+                        }
+                    },
+                    isSearching = state.isSearching,
+                    searchQuery = state.search,
+                    onSearchQueryChange = {
+                        eventPublisher(BreedListScreenContract.BreedListUiEvent.SearchFilter(it))
+                    }
+                )
+            }
+        ) { padding ->
 
+            // ... ostatak UI kao i do sada
+            if (state.loading) {
+                LoadingIndicator()
+            } else if (state.error != null) {
+                /* NoDataContent(
+                     text = "Error = ${state.error.message}",
+                 )*/
+            } else if (state.data.isEmpty()) {
+                NoDataContent(
+                    text =  "There is no data yet (loading data...)"
+                )
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize() // >>>>>> ovo rešava problem beskonačne visine
+                        .verticalScroll(rememberScrollState())
+                        .padding(padding)
+
+                ) {
+                    val listToDisplay = if (state.isSearching && state.search.isNotBlank()) {
+                        state.searchData
+                    } else {
+                        state.data
+                    }
+
+                    listToDisplay.forEach { breed ->
+                        BreedListItem(
+                            data = breed,
+                            onClick = { onBreedClick?.invoke(breed.id) }
+                        )
+                    }
+
+                }
             }
         }
     }
+
 }
 
 

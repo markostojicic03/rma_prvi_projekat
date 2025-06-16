@@ -20,6 +20,17 @@ interface BreedListScreenContract {
         data class SearchFilter(val query: String) : BreedListUiEvent()// kada korisnik kuca u pretrazi ime rase macke
         object OnToggleSearchClick: BreedListUiEvent()
         data object OnSearchClosed : BreedListUiEvent()
+
+        object OnStartQuizClicked : BreedListUiEvent()
+        object OnEditProfileClicked : BreedListUiEvent()
+        object OnLeaderboardClicked : BreedListUiEvent()
+    }
+
+    sealed class BreedsSideEffect {
+        object NavigateToQuiz : BreedsSideEffect()
+        object NavigateToEditProfile: BreedsSideEffect()
+        object NavigateToLeaderboard: BreedsSideEffect()
+
     }
 
 }
