@@ -57,12 +57,12 @@ fun QuizScreen(
         }
     }
 
-    // Fizički back taster
+
     BackHandler(enabled = !state.isQuizFinished) {
         showCancelDialog.value = true
     }
 
-    // Alert dialog za potvrdu cancel-a
+
     if (showCancelDialog.value) {
         AlertDialog(
             onDismissRequest = { showCancelDialog.value = false },
@@ -147,7 +147,8 @@ fun QuizScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(24.dp)) // razmak od vrha
+            Spacer(modifier = Modifier.height(24.dp))
+
 
 
             Text(
@@ -157,7 +158,7 @@ fun QuizScreen(
             )
 
 
-            // Tekst pitanja
+
             Text(
                 text = if (question.questionType) "What is the name of this breed?" else "There is one wrong temperament for this breed. Take the odd-one out!",
                 fontSize = 20.sp,
@@ -167,7 +168,6 @@ fun QuizScreen(
                     .padding(bottom = 8.dp)
             )
 
-            // Slika mačke
             question.breedImageUrl?.let {
                 AsyncImage(
                     model = it,
@@ -193,17 +193,16 @@ fun QuizScreen(
                             },
                             modifier = Modifier
                                 .weight(1f)
-                                .height(56.dp) // fiksna visina za sve dugmiće
+                                .height(56.dp)
                         ) {
                             Text(
                                 text = answer,
                                 textAlign = TextAlign.Center,
-                                maxLines = 2 // ako su dugački odgovori
+                                maxLines = 2
                             )
                         }
                     }
 
-                    // Ako ima samo 1 dugme u redu, drugi je prazan Spacer da sve ostane centrirano
                     if (rowAnswers.size == 1) {
                         Spacer(modifier = Modifier.weight(1f))
                     }

@@ -17,6 +17,4 @@ interface BreedGalleryContract {
     }
 
 
-
-    //side effects treba ovde da dodam(kada korisnik klikne na neku sliku, ta slika ide u full screen i slicno ->pogledaj specifikaciju)
 }

@@ -123,17 +123,17 @@ fun DrawerContent(
         )
 
         NavigationDrawerItem(
-            label = { Text("✏️ Edit Profile") },
+            label = { Text("Edit Profile") },
             selected = false,
             onClick = { onItemClick("edit_profile") }
         )
         NavigationDrawerItem(
-            label = { Text("❓ Start Quiz") },
+            label = { Text("Start Quiz") },
             selected = false,
             onClick = { onItemClick("start_quiz") }
         )
         NavigationDrawerItem(
-            label = { Text("🏆 Leaderboard") },
+            label = { Text("Leaderboard") },
             selected = false,
             onClick = { onItemClick("leaderboard") }
         )

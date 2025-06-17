@@ -122,17 +122,16 @@ class QuizViewModel @Inject constructor(
                         Log.d("QuizDebug", "Breed ${breedElement.id} (${breedElement.name}) nema slika — preskačem.")
 
                         continue
-                    }  // Ako nema slike, preskoči pitanje
+                    }
                     Log.d("QuizDebug", "Breed ${breedElement.id} (${breedElement.name}) IMAAA SLIKU.")
 
                     if(kotlin.random.Random.nextBoolean()){
-                        // za pogadjanje rase
+
                         val allBreedsInQuestion = (allBreeds - breedElement).shuffled().take(3).map { it.name } + breedElement.name
                         allQuestions.add(QuizContract.Question(allBreedsInQuestion, breedElement.name, breedElement.id, randomImageUrl, true))
 
                     }
                     else{
-                        //izbaci uljeza za temperamente
                         val currentTemperaments = breedElement.temperament
 
                         val otherTemperaments = allBreeds
@@ -167,7 +166,7 @@ class QuizViewModel @Inject constructor(
 
 
     suspend fun waitForAtLeastOneImage(breedId: String): String? {
-        return withTimeoutOrNull(4000) { // timeout posle 4 sekunde
+        return withTimeoutOrNull(4000) {
             breedRepository.observeAllImagesForBreedAlbum(breedId)
                 .distinctUntilChanged()
                 .first { it.isNotEmpty() }

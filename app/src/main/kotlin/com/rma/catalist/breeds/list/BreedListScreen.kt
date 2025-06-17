@@ -157,7 +157,6 @@ private fun BreedListScreen(
             }
         ) { padding ->
 
-            // ... ostatak UI kao i do sada
             if (state.loading) {
                 LoadingIndicator()
             } else if (state.error != null) {
@@ -171,7 +170,7 @@ private fun BreedListScreen(
             } else {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize() // >>>>>> ovo rešava problem beskonačne visine
+                        .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(padding)
 
