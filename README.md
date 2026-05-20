@@ -2,9 +2,6 @@
 
 **University project - Mobile Application Development, 2025.**
 
-<p align="center">
-  <img src="link_do_logo_slike.png" alt="Catalist Logo" width="150"/>
-</p>
 
 ## Project Overview
 **Catalist** is a high-performance Android application developed as a centerpiece for the **"Mobile Apps Development"** curriculum. The app is designed as a dual-module platform: a comprehensive digital encyclopedia for feline breeds and an interactive, data-driven trivia system.
@@ -16,9 +13,9 @@ Built with a focus on **Reactive Programming** and **Modern Android Architecture
 ## 📸 Screenshots
 
 <p align="center">
-  <img width="1080" height="2198" alt="Image20260520133712" src="https://github.com/user-attachments/assets/9dbf83c3-f553-46ba-8288-e1ebc9ff9dad" height="400"/>
-<img width="1080" height="2192" alt="Image20260520133716" src="https://github.com/user-attachments/assets/93590995-27bf-4ccd-b8df-7cf752b772ff" height="400"/>
-<img width="1080" height="2055" alt="Image20260520133719" src="https://github.com/user-attachments/assets/908dae51-8164-46cd-9a54-38323c47af86" height="40"/>
+  <img alt="Image20260520133712" src="https://github.com/user-attachments/assets/9dbf83c3-f553-46ba-8288-e1ebc9ff9dad" width="30%"/>
+<img alt="Image20260520133716" src="https://github.com/user-attachments/assets/93590995-27bf-4ccd-b8df-7cf752b772ff" width="30%"/>
+<img  alt="Image20260520133719" src="https://github.com/user-attachments/assets/908dae51-8164-46cd-9a54-38323c47af86" width="32%"/>
 </p>
 
 ---
@@ -34,9 +31,6 @@ The project adheres to the highest standards of modern Android engineering:
 * **Dependency Injection:** Managed via **Hilt**, ensuring a modular, decoupled, and easily testable codebase.
 
 *(Optional)*
-<p align="center">
-  <img src="link_do_arhitekture.png" alt="Architecture Diagram" width="80%"/>
-</p>
 
 ---
 
